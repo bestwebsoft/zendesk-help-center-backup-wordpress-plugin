@@ -16,9 +16,7 @@ Zendesk Help Center Backup is a simple yet highly convenient plugin that creates
 
 Features
 -----------------------------
-* An option to add an unlimited number of Properties. 
-* An option to add an image to the Property.
-* An option to sort Property by various criteria.
+
 
 Translation
 -----------------------------
