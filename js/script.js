@@ -1,16 +1,6 @@
 (function($) {
 	$( document ).ready( function() {
 		/**
-		 * add notice about changing on the settings page 
-		 */
-		$( '#zndskhc_settings_form input' ).bind( "change select", function() {
-			if ( $( this ).attr( 'type' ) != 'submit' ) {
-				$( '.updated.fade, .error' ).css( 'display', 'none' );
-				$( '#zndskhc_settings_notice' ).css( 'display', 'block' );
-			};
-		});
-
-		/**
 		 * show/hide neccessary blocks on settings page
 		 */
 		if ( ! $( 'input[name="zndskhc_emailing_fail_backup"]' ).is( ':checked' ) ) {
