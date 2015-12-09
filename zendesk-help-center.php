@@ -6,7 +6,7 @@ Description: This plugin allows to backup Zendesk Help Center.
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 0.1.3
+Version: 0.1.4
 Author URI: http://bestwebsoft.com/
 License: GPLv3 or later
 */
@@ -30,7 +30,7 @@ License: GPLv3 or later
 /* Function are using to add on admin-panel Wordpress page 'bws_plugins' and sub-page of this plugin */
 if ( ! function_exists( 'add_zndskhc_admin_menu' ) ) {
 	function add_zndskhc_admin_menu() {
-		bws_add_general_menu( plugin_basename( __FILE__ ) );
+		bws_general_menu();
 		$settings = add_submenu_page( 'bws_plugins', __( 'Zendesk HC Backup Settings', 'zendesk-help-center' ), 'Zendesk HC Backup', 'manage_options', "zendesk_hc.php", 'zndskhc_settings_page' );
 		add_action( 'load-' . $settings, 'zndskhc_add_tabs' );
 	}
@@ -303,7 +303,7 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 			$message = __( 'All plugin settings were restored.', 'zendesk-help-center' );
 		} ?>
 		<div class="wrap">
-			<h2><?php _e( 'Zendesk HC Backup Settings', 'zendesk-help-center' ); ?></h2>
+			<h1><?php _e( 'Zendesk HC Backup Settings', 'zendesk-help-center' ); ?></h1>
 			<h2 class="nav-tab-wrapper">
 				<a class="nav-tab <?php if ( ! isset( $_GET['tab'] ) ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php"><?php _e( 'Backup', 'zendesk-help-center' ); ?></a>
 				<a class="nav-tab <?php if ( isset( $_GET['tab'] ) && $_GET['tab'] == 'settings' ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php&tab=settings"><?php _e( 'Settings', 'zendesk-help-center' ); ?></a>
@@ -319,7 +319,7 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 				<?php } 
 				if ( $zndskhc_options['backup_elements']['categories'] || $zndskhc_options['backup_elements']['sections'] || $zndskhc_options['backup_elements']['articles'] ||
 					$zndskhc_options['backup_elements']['comments'] || $zndskhc_options['backup_elements']['labels'] || $zndskhc_options['backup_elements']['attachments'] ) { ?>
-					<h4><?php _e( 'Current backup', 'zendesk-help-center' ); ?>:</h4>
+					<h3><?php _e( 'Current backup', 'zendesk-help-center' ); ?>:</h3>
 					<?php if ( $zndskhc_options['backup_elements']['categories'] ) {
 						echo __( 'Categories' , 'zendesk-help-center' ) . ': ' . $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "zndskhc_categories`" ) . '<br/>';
 					}
@@ -392,14 +392,14 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 						</tr>
 						<tr valign="top">
 							<th scope="row"><?php _e( 'Backup', 'zendesk-help-center' ); ?></th>
-							<td>
-								<input type="checkbox" name="zndskhc_categories_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['categories'] ) echo 'checked'; ?> /> <?php _e( 'Categories' , 'zendesk-help-center' ); ?><br />
-								<input type="checkbox" name="zndskhc_sections_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['sections'] ) echo 'checked'; ?> /> <?php _e( 'Sections' , 'zendesk-help-center' ); ?><br />
-								<input type="checkbox" name="zndskhc_articles_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['articles'] ) echo 'checked'; ?> /> <?php _e( 'Articles' , 'zendesk-help-center' ); ?><br />
-								<input type="checkbox" name="zndskhc_comments_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['comments'] ) echo 'checked'; ?> /> <?php _e( 'Articles Comments' , 'zendesk-help-center' ); ?><br />
-								<input type="checkbox" name="zndskhc_labels_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['labels'] ) echo 'checked'; ?> /> <?php _e( 'Articles Labels' , 'zendesk-help-center' ); ?><br />
-								<input type="checkbox" name="zndskhc_attachments_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['attachments'] ) echo 'checked'; ?> /> <?php _e( 'Articles Attachments' , 'zendesk-help-center' ); ?>
-							</td>
+							<td><fieldset>
+								<label><input type="checkbox" name="zndskhc_categories_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['categories'] ) echo 'checked'; ?> /> <?php _e( 'Categories' , 'zendesk-help-center' ); ?></label><br />
+								<label><input type="checkbox" name="zndskhc_sections_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['sections'] ) echo 'checked'; ?> /> <?php _e( 'Sections' , 'zendesk-help-center' ); ?></label><br />
+								<label><input type="checkbox" name="zndskhc_articles_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['articles'] ) echo 'checked'; ?> /> <?php _e( 'Articles' , 'zendesk-help-center' ); ?></label><br />
+								<label><input type="checkbox" name="zndskhc_comments_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['comments'] ) echo 'checked'; ?> /> <?php _e( 'Articles Comments' , 'zendesk-help-center' ); ?></label><br />
+								<label><input type="checkbox" name="zndskhc_labels_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['labels'] ) echo 'checked'; ?> /> <?php _e( 'Articles Labels' , 'zendesk-help-center' ); ?></label><br />
+								<label><input type="checkbox" name="zndskhc_attachments_backup" value="1" <?php if ( $zndskhc_options['backup_elements']['attachments'] ) echo 'checked'; ?> /> <?php _e( 'Articles Attachments' , 'zendesk-help-center' ); ?></label>
+							</fieldset></td>
 						</tr>
 						<tr valign="top">
 							<th scope="row"><?php _e( 'Send email in case of backup failure', 'zendesk-help-center' ); ?></th>
@@ -1062,7 +1062,7 @@ if ( ! function_exists( 'zndskhc_get_logs' ) ) {
 	function zndskhc_get_logs() {
 		$content = file_get_contents( dirname( __FILE__ )  . "/backup.log" );
 		if ( ! empty( $content ) ) {
-			echo '<h4>' . __( 'Last log entries', 'zendesk-help-center' ) . ':</h4>';
+			echo '<h3>' . __( 'Last log entries', 'zendesk-help-center' ) . ':</h3>';
 			$content_array = explode( "\n", $content );
 			if ( is_array( $content_array ) ) {
 				$content_reverse = array_reverse( $content_array );

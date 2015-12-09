@@ -3,8 +3,8 @@ Contributors: bestwebsoft
 Donate link: http://bestwebsoft.com/donate/
 Tags: add zendesk plugin, add help center plugin, admin, backup, backup data, backup time, database, free, free plugin, free zendesk plugin, free help center plugin, help center, help centre, save zendesk help center data, synchronize zendesk help center, wordpress,  wp, wp plugin, wp free plugin, wp zendesk, wp zendesk plugin, wp simple zendesk plugin, wp free zendesk, wp free zendesk plugin, wordpress plugin, wordpress free plugin, wordpress zendesk, wordpress zendesk plugin, wordpress simple zendesk plugin, wordpress free zendesk, wordpress free zendesk plugin zednesk, zen desk, zendeks, zendesk, zendesk backup log, zendesk data to database, zendesk hc, zendesk help center, zendesk help center backup, zendesk help center backup plugin, zendesk help center data to database, zendks, data to database
 Requires at least: 4.0
-Tested up to: 4.3.1
-Stable tag: 0.1.3
+Tested up to: 4.4
+Stable tag: 0.1.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 
 == Changelog ==
 
+= V0.1.4 - 09.12.2015 =
+* Bugfix : The bug with plugin menu duplicating was fixed.
+
 = V0.1.3 - 05.11.2015 =
 * NEW: Current backup info.
 * Update : Textdomain was changed.
@@ -98,6 +101,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V0.1.4 =
+The bug with plugin menu duplicating was fixed.
 
 = V0.1.3 =
 Current backup info was added. Textdomain was changed. The error with the articles backup (if there is a pagination) was fixed.
