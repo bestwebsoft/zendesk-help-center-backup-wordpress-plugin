@@ -17,8 +17,11 @@
 		/**
 		 * show loader on backup page
 		 */
-		$( '#zndskhc_synch_button' ).click( function() {
-			$( '#zndskhc_loader' ).show();
+		$( '.zndskhc_submit_button' ).click( function() {
+			$( this ).parent().find( '.zndskhc_loader' ).css( 'display', 'inline-block' );
+			if ( $( this ).hasClass( 'zndskhc_export' ) ) {
+				$( this ).parent().find( '.zndskhc_loader' ).fadeOut( 800 );
+			}
 		});
 	});
 })(jQuery);
