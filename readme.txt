@@ -1,34 +1,35 @@
-=== Zendesk Help Center Backup by BestWebSoft ===
+=== Zendesk Help Center by BestWebSoft ===
 Contributors: bestwebsoft
 Donate link: http://bestwebsoft.com/donate/
 Tags: add zendesk plugin, add help center plugin, admin, backup, backup data, backup time, database, free, free plugin, free zendesk plugin, free help center plugin, help center, help centre, save zendesk help center data, synchronize zendesk help center, wordpress,  wp, wp plugin, wp free plugin, wp zendesk, wp zendesk plugin, wp simple zendesk plugin, wp free zendesk, wp free zendesk plugin, wordpress plugin, wordpress free plugin, wordpress zendesk, wordpress zendesk plugin, wordpress simple zendesk plugin, wordpress free zendesk, wordpress free zendesk plugin zednesk, zen desk, zendeks, zendesk, zendesk backup log, zendesk data to database, zendesk hc, zendesk help center, zendesk help center backup, zendesk help center backup plugin, zendesk help center data to database, zendks, data to database, export zendesk, export help center
 Requires at least: 4.0
-Tested up to: 4.4.1
-Stable tag: 0.1.5
+Tested up to: 4.4.2
+Stable tag: 1.0.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-This plugin allows to backup Zendesk Help Center.
+This plugin allows to backup&export Zendesk Help Center.
 
 == Description ==
 
-Note: This is a public beta version, which contains basic product options. You are welcome to suggest new features and usability improvements.
-<a href="http://support.bestwebsoft.com/hc/en-us/requests/new">Submit a new feature</a>
-
-Zendesk Help Center Backup is a simple yet highly convenient plugin that creates a backup copy of your Zendesk Help Center to the database. The backup is made through the cron within the time frame specified in the settings. The time of the last backup, as well as logs, are displayed on the plugin settings page. Also, in case backup error occurs, the plugin sends a message to the email, which is also specified in the settings.
+Zendesk Help Center is a simple yet highly convenient plugin that allows to backup&export your Zendesk Help Center data. The backup is made through the cron within the time frame specified in the settings. The time of the last backup, as well as logs, are displayed on the plugin settings page. Also, if backup error occurs, the plugin sends a message to the email, which is also specified in the settings.
 
 http://www.youtube.com/watch?v=7YT3dlsx0iQ
 
-<a href="http://www.youtube.com/watch?v=0QatAvYLxMM" target="_blank">Zendesk Help Center Backup by BestWebSoft Video instruction on Installation</a>
+<a href="http://www.youtube.com/watch?v=0QatAvYLxMM" target="_blank">Zendesk Help Center by BestWebSoft Video instruction on Installation</a>
 
-<a href="http://wordpress.org/plugins/zendesk-help-center/faq/" target="_blank">Zendesk Help Center Backup by BestWebSoft FAQ</a>
+<a href="http://wordpress.org/plugins/zendesk-help-center/faq/" target="_blank">Zendesk Help Center by BestWebSoft FAQ</a>
 
-<a href="http://support.bestwebsoft.com" target="_blank">Zendesk Help Center Backup by BestWebSoft Support</a>
+<a href="http://support.bestwebsoft.com" target="_blank">Zendesk Help Center by BestWebSoft Support</a>
+
+<a href="http://bestwebsoft.com/products/zendesk-help-center/?k=bd5514f32d2c5691ebcad50c03ab3139" target="_blank">Upgrade to Zendesk Help Center Pro by BestWebSoft</a>
 
 = Features =
 
 * Backup your Zendesk Help Center data
 * Export current backup
+
+If you have a feature, suggestion or idea you'd like to see in the plugin, we'd love to hear about it! <a href="http://support.bestwebsoft.com/hc/en-us/requests/new" target="_blank">Suggest a Feature</a>
 
 = Translation =
 
@@ -41,9 +42,9 @@ If you create your own language pack or update an existing one, you can send <a 
 
 1. Upload `zendesk-help-center` folder to `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Plugin settings are located in 'BWS Plugin', 'Zendesk HC Backup'.
+3. Plugin settings are located in 'BWS Plugins', 'Zendesk HC'.
 
-<a href="https://docs.google.com/document/d/1Y-eA3oEO_Z1GW0jK8uXGpW3qnxzPIQ2jMBP6ylcWKwo/edit" target="_blank">View a Step-by-step Instruction on Zendesk HC Backup Installation</a>.
+<a href="https://docs.google.com/document/d/1Y-eA3oEO_Z1GW0jK8uXGpW3qnxzPIQ2jMBP6ylcWKwo/edit" target="_blank">View a Step-by-step Instruction on Zendesk HC Installation</a>.
 
 http://www.youtube.com/watch?v=0QatAvYLxMM
 
@@ -88,6 +89,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 
 == Changelog ==
 
+= V1.0.0 - 29.02.2016 =
+* Update : We updated all functionality for wordpress 4.4.2.
+
 = V0.1.5 - 21.01.2016 =
 * NEW: Ability to export current backup was added.
 
@@ -109,6 +113,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.0.0 =
+We updated all functionality for wordpress 4.4.2.
 
 = V0.1.5 - 21.01.2016 =
 Ability to export current backup was added.
