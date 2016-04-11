@@ -4,5 +4,8 @@
 	position: fixed;
 }
 .zndskhc_error_log {
-	color: red;
+	color: #dc3232;
+}
+.zndskhc_warning_log {
+	color: #DAA520;
 }

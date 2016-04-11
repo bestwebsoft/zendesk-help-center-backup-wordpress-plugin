@@ -4,7 +4,7 @@ Donate link: http://bestwebsoft.com/donate/
 Tags: add zendesk plugin, add help center plugin, admin, backup, backup data, backup time, database, free, free plugin, free zendesk plugin, free help center plugin, help center, help centre, save zendesk help center data, synchronize zendesk help center, wordpress,  wp, wp plugin, wp free plugin, wp zendesk, wp zendesk plugin, wp simple zendesk plugin, wp free zendesk, wp free zendesk plugin, wordpress plugin, wordpress free plugin, wordpress zendesk, wordpress zendesk plugin, wordpress simple zendesk plugin, wordpress free zendesk, wordpress free zendesk plugin zednesk, zen desk, zendeks, zendesk, zendesk backup log, zendesk data to database, zendesk hc, zendesk help center, zendesk help center backup, zendesk help center backup plugin, zendesk help center data to database, zendks, data to database, export zendesk, export help center
 Requires at least: 4.0
 Tested up to: 4.4.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -89,6 +89,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 
 == Changelog ==
 
+= V1.0.1 - 11.04.2016 =
+* Update : Notifications was added.
+
 = V1.0.0 - 29.02.2016 =
 * Update : We updated all functionality for wordpress 4.4.2.
 
@@ -113,6 +116,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.0.1 =
+Notifications was added.
 
 = V1.0.0 =
 We updated all functionality for wordpress 4.4.2.

@@ -6,7 +6,7 @@ Description: This plugin allows to backup&export Zendesk Help Center.
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.0
+Version: 1.0.1
 Author URI: http://bestwebsoft.com/
 License: GPLv3 or later
 */
@@ -227,6 +227,14 @@ if ( ! function_exists( 'zndskhc_db_table' ) ) {
 	}
 }
 
+if ( ! function_exists( 'zndskhc_activation_hook' ) ) {
+	function zndskhc_activation_hook() {
+		global $zndskhc_options;
+		register_zndskhc_settings();
+		zndskhc_db_table();
+	}
+}
+
 /* Function is forming page of the settings of this plugin */
 if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 	function  zndskhc_settings_page() {
@@ -425,7 +433,18 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 						<tr valign="top">
 							<th scope="row"><?php _e( 'Zendesk Information', 'zendesk-help-center' ); ?></th>
 							<td>
-								<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $zndskhc_options['subdomain']; ?>" /> <?php _e( 'subdomain', 'zendesk-help-center' ); ?><br />
+								<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $zndskhc_options['subdomain']; ?>" /> 
+								<?php _e( 'subdomain', 'zendesk-help-center' ); ?> 
+								<div class="bws_help_box dashicons dashicons-editor-help">
+									<div class="bws_hidden_help_text" style="min-width: 100px;">
+										<?php printf( 
+											__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
+											'<i>https://mysubdomain.zendesk.com</i>',
+											'<i>mysubdomain</i>'
+										); ?>
+									</div>
+								</div>
+								<br />
 								<input type="text" maxlength='250' name="zndskhc_user" value="<?php echo $zndskhc_options['user']; ?>" /> <?php _e( 'user', 'zendesk-help-center' ); ?><br />
 								<input type="password" maxlength='250' name="zndskhc_password" value="<?php echo $zndskhc_options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?>
 							</td>
@@ -648,11 +667,17 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 				}
 
 				if ( isset( $array_resp['error'] ) ) {
-					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Categories backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
-					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
-						zndskhc_send_mail( $log );
-					return $log;
+					if ( 'RecordNotFound' == $array_resp['error'] ) {
+						$log = __( 'WARNING', 'zendesk-help-center-pro' ) . ': ' . __( 'Categories backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
+						zndskhc_log( $log );
+						break;
+					} else {
+						$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Categories backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
+						zndskhc_log( $log );
+						if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+							zndskhc_send_mail( $log );
+						return $log;
+					}
 				} else {
 					
 					foreach ( $array_resp['categories'] as $key => $value ) {
@@ -734,11 +759,17 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 				} 
 
 				if ( isset( $array_resp['error'] ) ) {
-					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Sections backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
-					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
-						zndskhc_send_mail( $log );
-					return $log;
+					if ( 'RecordNotFound' == $array_resp['error'] ) {
+						$log = __( 'WARNING', 'zendesk-help-center-pro' ) . ': ' . __( 'Sections backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
+						zndskhc_log( $log );
+						break;
+					} else {
+						$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Sections backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
+						zndskhc_log( $log );
+						if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+							zndskhc_send_mail( $log );
+						return $log;
+					}
 				} else {
 					
 					foreach ( $array_resp['sections'] as $key => $value ) {
@@ -1124,11 +1155,17 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 			} 
 
 			if ( isset( $array_resp['error'] ) ) {
-				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
-				zndskhc_log( $log );
-				if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
-					zndskhc_send_mail( $log );
-				return $log;
+				if ( 'RecordNotFound' == $array_resp['error'] ) {
+					$log = __( 'WARNING', 'zendesk-help-center-pro' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
+					zndskhc_log( $log );
+					break;
+				} else {
+					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
+					zndskhc_log( $log );
+					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+						zndskhc_send_mail( $log );
+					return $log;
+				}
 			} else {
 				$added = $updated = $deleted = 0;
 				foreach ( $array_resp["labels"] as $key => $value ) {
@@ -1232,6 +1269,8 @@ if ( ! function_exists( 'zndskhc_get_logs' ) ) {
 						echo '<div';
 						if ( false != strpos( $value, __( 'ERROR', 'zendesk-help-center' ) ) )
 							echo ' class="zndskhc_error_log"';
+						if ( false != strpos( $value, __( 'WARNING', 'zendesk-help-center' ) ) )
+							echo ' class="zndskhc_warning_log"';
 						echo '>' . $value . '</div>';
 						$i++;
 					} else
@@ -1377,6 +1416,10 @@ if ( ! function_exists( 'delete_zndskhc_settings' ) ) {
 if ( ! function_exists( 'zndskhc_plugin_uninstall' ) ) {
 	function zndskhc_plugin_uninstall() {
 		global $wpdb;
+
+		if ( ! function_exists( 'get_plugins' ) )
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
 		$all_plugins = get_plugins();
 
 		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
@@ -1395,10 +1438,14 @@ if ( ! function_exists( 'zndskhc_plugin_uninstall' ) ) {
 			if ( ! array_key_exists( 'zendesk-help-center-pro/zendesk-help-center-pro.php', $all_plugins ) )
 				delete_zndskhc_settings();
 		}
+
+		require_once( dirname( __FILE__ ) . '/bws_menu/bws_include.php' );
+		bws_include_init( plugin_basename( __FILE__ ) );
+		bws_delete_plugin( plugin_basename( __FILE__ ) );
 	}
 }
 
-register_activation_hook( __FILE__, 'zndskhc_db_table' );
+register_activation_hook( __FILE__, 'zndskhc_activation_hook' );
 
 add_action( 'admin_menu', 'add_zndskhc_admin_menu' );
 add_action( 'init', 'zndskhc_init' );
