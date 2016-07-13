@@ -1,4 +1,4 @@
-<a href="http://bestwebsoft.com/products/zendesk-help-center/" target=_blank>Zendesk HC Backup WordPress Plugin</a>
+<a href="http://bestwebsoft.com/products/zendesk-help-center/" target=_blank>Zendesk Help Center WordPress Plugin</a>
 ========================
 
 Zendesk Help Center is a simple yet highly convenient plugin that allows to backup&#38;export your Zendesk Help Center data. The backup is made through the cron within the time frame specified in the settings. The time of the last backup, as well as logs, are displayed on the plugin settings page. Also, if backup error occurs, the plugin sends a message to the email, which is also specified in the settings.

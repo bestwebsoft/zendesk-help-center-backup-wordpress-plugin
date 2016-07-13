@@ -1,14 +1,14 @@
 === Zendesk Help Center by BestWebSoft ===
 Contributors: bestwebsoft
 Donate link: http://bestwebsoft.com/donate/
-Tags: add zendesk plugin, add help center plugin, admin, backup, backup data, backup time, database, free, free plugin, free zendesk plugin, free help center plugin, help center, help centre, save zendesk help center data, synchronize zendesk help center, wordpress,  wp, wp plugin, wp free plugin, wp zendesk, wp zendesk plugin, wp simple zendesk plugin, wp free zendesk, wp free zendesk plugin, wordpress plugin, wordpress free plugin, wordpress zendesk, wordpress zendesk plugin, wordpress simple zendesk plugin, wordpress free zendesk, wordpress free zendesk plugin zednesk, zen desk, zendeks, zendesk, zendesk backup log, zendesk data to database, zendesk hc, zendesk help center, zendesk help center backup, zendesk help center backup plugin, zendesk help center data to database, zendks, data to database, export zendesk, export help center
+Tags: backup, backup data, database, zendesk, zendesk plugin, zendesk help center, zendesk help center backup, zendesk backup log, zendesk data to database, backup time, help center, save zendesk center data
 Requires at least: 4.0
-Tested up to: 4.4.2
-Stable tag: 1.0.1
+Tested up to: 4.5.3
+Stable tag: 1.0.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-This plugin allows to backup&export Zendesk Help Center.
+Backup and export Zendesk Help Center content automatically to your WordPress website database.
 
 == Description ==
 
@@ -36,13 +36,21 @@ If you have a feature, suggestion or idea you'd like to see in the plugin, we'd 
 * Russian (ru_RU)
 * Ukrainian (uk)
 
-If you create your own language pack or update an existing one, you can send <a href="http://codex.wordpress.org/Translating_WordPress" target="_blank">the text of PO and MO files</a> to <a href="http://bestwebsoft.com/" target="_blank">BestWebSoft</a> and we'll add it to the plugin. You can download the latest version of the program for working with PO and MO files <a href="http://www.poedit.net/download.php" target="_blank">Poedit</a>.
+If you create your own language pack or update an existing one, you can send <a href="http://codex.wordpress.org/Translating_WordPress" target="_blank">the text of PO and MO files</a> to <a href="http://support.bestwebsoft.com/hc/en-us/requests/new" target="_blank">BestWebSoft</a> and we'll add it to the plugin. You can download the latest version of the program for working with PO and MO files <a href="http://www.poedit.net/download.php" target="_blank">Poedit</a>.
+
+= Technical support =
+
+Dear users, our plugins are available for free download. If you have any questions or recommendations regarding the functionality of our plugins (existing options, new options, current issues), please feel free to contact us. Please note that we accept requests in English only. All messages in other languages won't be accepted.
+
+If you notice any bugs in the plugin's work, you can notify us about it and we'll then investigate and fix the issue. Your request should contain URL of the website, issues description and WordPress admin panel credentials.
+Moreover, we can customize the plugin according to your requirements. It's a paid service (as a rule it costs $40, but the price can vary depending on the amount of the necessary changes and their complexity). Please note that we could also include this or that feature (developed for you) in the next release and then share it with other users.
+We can fix some things for free for the users who provide a translation of our plugin into their native language (this should be a new translation of a certain plugin, you can check available translations on the official plugin page).
 
 == Installation ==
 
 1. Upload `zendesk-help-center` folder to `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Plugin settings are located in 'BWS Plugins', 'Zendesk HC'.
+3. Plugin settings are located in 'BWS Panel', 'Zendesk HC'.
 
 <a href="https://docs.google.com/document/d/1Y-eA3oEO_Z1GW0jK8uXGpW3qnxzPIQ2jMBP6ylcWKwo/edit" target="_blank">View a Step-by-step Instruction on Zendesk HC Installation</a>.
 
@@ -89,6 +97,11 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 
 == Changelog ==
 
+= V1.0.2 - 13.07.2016 =
+* Update : BWS panel section was updated.
+* Pro : Preloader was added for help widget.
+* Pro : The information about IP and User Agent has been added to Widget statistic.
+
 = V1.0.1 - 11.04.2016 =
 * Update : Notifications was added.
 
@@ -116,6 +129,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.0.2 =
+BWS panel section was updated. Preloader was added for help widget. The information about IP and User Agent has been added to Widget statistic.
 
 = V1.0.1 =
 Notifications was added.

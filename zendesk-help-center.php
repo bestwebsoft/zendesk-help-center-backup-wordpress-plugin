@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: Zendesk Help Center by BestWebSoft
-Plugin URI: http://bestwebsoft.com/products/
-Description: This plugin allows to backup&export Zendesk Help Center.
+Plugin URI: http://bestwebsoft.com/products/zendesk-help-center/
+Description: Backup and export Zendesk Help Center content automatically to your WordPress website database.
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://bestwebsoft.com/
 License: GPLv3 or later
 */
@@ -27,11 +27,11 @@ License: GPLv3 or later
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/* Function are using to add on admin-panel Wordpress page 'bws_plugins' and sub-page of this plugin */
+/* Function are using to add on admin-panel Wordpress page 'bws_panel' and sub-page of this plugin */
 if ( ! function_exists( 'add_zndskhc_admin_menu' ) ) {
 	function add_zndskhc_admin_menu() {
 		bws_general_menu();
-		$settings = add_submenu_page( 'bws_plugins', __( 'Zendesk HC Settings', 'zendesk-help-center' ), 'Zendesk HC', 'manage_options', "zendesk_hc.php", 'zndskhc_settings_page' );
+		$settings = add_submenu_page( 'bws_panel', __( 'Zendesk HC Settings', 'zendesk-help-center' ), 'Zendesk HC', 'manage_options', "zendesk_hc.php", 'zndskhc_settings_page' );
 		add_action( 'load-' . $settings, 'zndskhc_add_tabs' );
 	}
 }
@@ -57,7 +57,7 @@ if ( ! function_exists ( 'zndskhc_init' ) ) {
 		}
 
 		/* Function check if plugin is compatible with current WP version  */
-		bws_wp_min_version_check( plugin_basename( __FILE__ ), $zndskhc_plugin_info, '4.0', '4.0' );
+		bws_wp_min_version_check( plugin_basename( __FILE__ ), $zndskhc_plugin_info, '4.0' );
 	}
 }
 
@@ -65,7 +65,7 @@ if ( ! function_exists( 'zndskhc_admin_init' ) ) {
 	function zndskhc_admin_init() {
 		global $bws_plugin_info, $zndskhc_plugin_info;
 
-		if ( ! isset( $bws_plugin_info ) || empty( $bws_plugin_info ) )			
+		if ( empty( $bws_plugin_info ) )			
 			$bws_plugin_info = array( 'id' => '208', 'version' => $zndskhc_plugin_info["Version"] );		
 		
 		/* Call register settings function */
@@ -125,7 +125,6 @@ if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 				wp_schedule_event( $time, 'schedules_hours', 'auto_synchronize_zendesk_hc' );
 			}
 
-			$zndskhc_options_default['display_settings_notice'] = 0;
 			$zndskhc_options = array_merge( $zndskhc_options_default, $zndskhc_options );
 			$zndskhc_options['plugin_option_version'] = $zndskhc_plugin_info["Version"];
 			$update_option = true;
@@ -1158,7 +1157,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 				if ( 'RecordNotFound' == $array_resp['error'] ) {
 					$log = __( 'WARNING', 'zendesk-help-center-pro' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
 					zndskhc_log( $log );
-					break;
+					return $log;
 				} else {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
 					zndskhc_log( $log );
@@ -1391,7 +1390,7 @@ if ( ! function_exists( 'zndskhc_add_tabs' ) ) {
 if ( ! function_exists( 'delete_zndskhc_settings' ) ) {
 	function delete_zndskhc_settings() {
 		global $wpdb;
-
+		delete_option( 'zndskhc_options' );
 		/* delete plugin`s tables */
 		$wpdb->query( "DROP TABLE IF EXISTS
 			`" . $wpdb->prefix . "zndskhc_categories`, 
@@ -1421,22 +1420,19 @@ if ( ! function_exists( 'zndskhc_plugin_uninstall' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 		$all_plugins = get_plugins();
-
-		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-			$old_blog = $wpdb->blogid;
-			/* Get all blog ids */
-			$blogids = $wpdb->get_col( "SELECT `blog_id` FROM $wpdb->blogs" );
-			foreach ( $blogids as $blog_id ) {
-				switch_to_blog( $blog_id );
-				delete_option( 'zndskhc_options' );
-				if ( ! array_key_exists( 'zendesk-help-center-pro/zendesk-help-center-pro.php', $all_plugins ) )
+		if ( ! array_key_exists( 'zendesk-help-center-pro/zendesk-help-center-pro.php', $all_plugins ) ) {
+			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+				$old_blog = $wpdb->blogid;
+				/* Get all blog ids */
+				$blogids = $wpdb->get_col( "SELECT `blog_id` FROM $wpdb->blogs" );
+				foreach ( $blogids as $blog_id ) {
+					switch_to_blog( $blog_id );
 					delete_zndskhc_settings();
-			}
-			switch_to_blog( $old_blog );
-		} else {
-			delete_option( 'zndskhc_options' );
-			if ( ! array_key_exists( 'zendesk-help-center-pro/zendesk-help-center-pro.php', $all_plugins ) )
+				}
+				switch_to_blog( $old_blog );
+			} else {
 				delete_zndskhc_settings();
+			}
 		}
 
 		require_once( dirname( __FILE__ ) . '/bws_menu/bws_include.php' );
