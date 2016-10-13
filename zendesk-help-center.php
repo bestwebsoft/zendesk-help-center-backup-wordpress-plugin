@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: Zendesk Help Center by BestWebSoft
-Plugin URI: http://bestwebsoft.com/products/zendesk-help-center/
+Plugin URI: http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/
 Description: Backup and export Zendesk Help Center content automatically to your WordPress website database.
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://bestwebsoft.com/
 License: GPLv3 or later
 */
@@ -501,7 +501,7 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 								<div class="bws_info">
 									<?php _e( 'Unlock premium options by upgrading to Pro version', 'zendesk-help-center' ); ?>
 								</div>
-								<a class="bws_button" href="http://bestwebsoft.com/products/zendesk-help-center/?k=036b375477a35a960f966d052591e9ed&pn=208&v=<?php echo $zndskhc_plugin_info["Version"]; ?>&wp_v=<?php echo $wp_version; ?>" target="_blank" title="Zendesk Help Center Pro"><?php _e( 'Learn More', 'zendesk-help-center' ); ?></a>
+								<a class="bws_button" href="http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=036b375477a35a960f966d052591e9ed&pn=208&v=<?php echo $zndskhc_plugin_info["Version"]; ?>&wp_v=<?php echo $wp_version; ?>" target="_blank" title="Zendesk Help Center Pro"><?php _e( 'Learn More', 'zendesk-help-center' ); ?></a>
 								<div class="clear"></div>
 							</div>
 						</div>
