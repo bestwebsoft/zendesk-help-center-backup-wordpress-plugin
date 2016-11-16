@@ -12,9 +12,11 @@ Backup and export Zendesk Help Center content automatically to your WordPress we
 
 == Description ==
 
-This plugin is a simple solution to backup and export your Zendesk Help Center data on WordPress website. Configure it, display Help Center widget, synchronize and make export of the current data.
+This plugin is a simple solution to backup and export your Zendesk Help Center data on WordPress website. Configure it, display enhanced Help Center widget, synchronize and make export of the current data.
 
 Install now and never lose your Zendesk Help Center articles!
+
+> **NOTE:** Zendesk HC plugin requires Help Center system to be activated in your Zendesk account and doesn’t work with an old system.
 
 http://www.youtube.com/watch?v=7YT3dlsx0iQ
 
@@ -29,7 +31,7 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 	* Article attachments
 * Log backups
 * Email notifications in case of backup failure
-* Set the time period for Zendesk Help Center synchronization 
+* Set the time period for Zendesk Help Center synchronization
 * Compatible with latest WordPress version 
 * Incredibly simple settings for fast setup without modifying code
 * Detailed step-by-step documentation and videos
@@ -38,7 +40,9 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 >
 > All features from Free version included plus:
 >
-> * Display help widget on your website
+> * Add and configure enhanced Zendesk Help Center widget 
+> * Track widget activity stats
+> * View articles data via admin dashboard
 > * Get answer to your support question within one business day ([Support Policy](http://bestwebsoft.com/support-policy/))
 >
 > [Upgrade to Pro Now](http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=bd5514f32d2c5691ebcad50c03ab3139)

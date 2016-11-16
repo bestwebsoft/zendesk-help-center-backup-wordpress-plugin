@@ -1,13 +1,17 @@
-<a href="http://bestwebsoft.com/products/zendesk-help-center/" target=_blank>Zendesk Help Center WordPress Plugin</a>
+<a href="http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/" target=_blank>Zendesk Help Center WordPress Plugin</a>
 ========================
 
 Backup and export Zendesk Help Center content automatically to your WordPress website database.
 
 <img src="http://bestwebsoft.com/wp-content/uploads/2015/04/zendesk-help-center-banner-website.jpg" />
 
-<p>This plugin is a simple solution to backup and export your Zendesk Help Center data on WordPress website. Configure it, display Help Center widget, synchronize and make export of the current data.</p>
+<p>This plugin is a simple solution to backup and export your Zendesk Help Center data on WordPress website. Configure it, display enhanced Help Center widget, synchronize and make export of the current data.</p>
 
 <p>Install now and never lose your Zendesk Help Center articles!</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> Zendesk HC plugin requires Help Center system to be activated in your Zendesk account and doesn&#8217;t work with an old system.</p>
+</blockquote>
 
 
 <div class='video'></div>
@@ -28,7 +32,7 @@ Backup and export Zendesk Help Center content automatically to your WordPress we
 </ul></li>
 <li>Log backups</li>
 <li>Email notifications in case of backup failure</li>
-<li>Set the time period for Zendesk Help Center synchronization </li>
+<li>Set the time period for Zendesk Help Center synchronization</li>
 <li>Compatible with latest WordPress version </li>
 <li>Incredibly simple settings for fast setup without modifying code</li>
 <li>Detailed step-by-step documentation and videos</li>
@@ -40,7 +44,9 @@ Backup and export Zendesk Help Center content automatically to your WordPress we
   <p>All features from Free version included plus:</p>
   
   <ul>
-  <li>Display help widget on your website</li>
+  <li>Add and configure enhanced Zendesk Help Center widget </li>
+  <li>Track widget activity stats</li>
+  <li>View articles data via admin dashboard</li>
   <li>Get answer to your support question within one business day (<a href="http://bestwebsoft.com/support-policy/">Support Policy</a>)</li>
   </ul>
   
