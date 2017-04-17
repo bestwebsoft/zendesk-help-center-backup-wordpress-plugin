@@ -1,17 +1,17 @@
 <?php
 /*
 Plugin Name: Zendesk Help Center by BestWebSoft
-Plugin URI: http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/
+Plugin URI: https://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/
 Description: Backup and export Zendesk Help Center content automatically to your WordPress website database.
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.4
-Author URI: http://bestwebsoft.com/
+Version: 1.0.5
+Author URI: https://bestwebsoft.com/
 License: GPLv3 or later
 */
  
-/*  © Copyright 2016  BestWebSoft  ( http://support.bestwebsoft.com )
+/*  © Copyright 2017  BestWebSoft  ( https://support.bestwebsoft.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -498,10 +498,7 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 								</table>
 							</div>
 							<div class="bws_pro_version_tooltip">
-								<div class="bws_info">
-									<?php _e( 'Unlock premium options by upgrading to Pro version', 'zendesk-help-center' ); ?>
-								</div>
-								<a class="bws_button" href="http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=036b375477a35a960f966d052591e9ed&pn=208&v=<?php echo $zndskhc_plugin_info["Version"]; ?>&wp_v=<?php echo $wp_version; ?>" target="_blank" title="Zendesk Help Center Pro"><?php _e( 'Learn More', 'zendesk-help-center' ); ?></a>
+								<a class="bws_button" href="https://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=036b375477a35a960f966d052591e9ed&pn=208&v=<?php echo $zndskhc_plugin_info["Version"]; ?>&wp_v=<?php echo $wp_version; ?>" target="_blank" title="Zendesk Help Center Pro"><?php _e( 'Learn More', 'zendesk-help-center' ); ?></a>
 								<div class="clear"></div>
 							</div>
 						</div>
@@ -1338,8 +1335,8 @@ if ( !function_exists( 'zndskhc_links' ) ) {
 		if ( $file == $base ) {
 			if ( ! is_network_admin() )
 				$links[]	=	'<a href="admin.php?page=zendesk_hc.php&action=settings">' . __( 'Settings', 'zendesk-help-center' ) . '</a>';
-			$links[]	=	'<a href="http://wordpress.org/plugins/zendesk-help-center/faq/" target="_blank">' . __( 'FAQ', 'zendesk-help-center' ) . '</a>';
-			$links[]	=	'<a href="http://support.bestwebsoft.com">' . __( 'Support', 'zendesk-help-center' ) . '</a>';
+			$links[]	=	'<a href="https://support.bestwebsoft.com/hc/en-us/sections/200956739" target="_blank">' . __( 'FAQ', 'zendesk-help-center' ) . '</a>';
+			$links[]	=	'<a href="https://support.bestwebsoft.com">' . __( 'Support', 'zendesk-help-center' ) . '</a>';
 		}
 		return $links;
 	}

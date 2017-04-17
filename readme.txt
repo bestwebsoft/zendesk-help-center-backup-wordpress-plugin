@@ -1,10 +1,10 @@
 === Zendesk Help Center by BestWebSoft ===
 Contributors: bestwebsoft
-Donate link: http://bestwebsoft.com/donate/
+Donate link: https://bestwebsoft.com/donate/
 Tags: backup, backup data, database, zendesk, zendesk plugin, zendesk help center, zendesk help center backup, zendesk backup log, zendesk data to database, backup time, help center, save zendesk center data
 Requires at least: 4.0
-Tested up to: 4.6.1
-Stable tag: 1.0.4
+Tested up to: 4.7.3
+Stable tag: 1.0.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -43,37 +43,32 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 > * Add and configure enhanced Zendesk Help Center widget 
 > * Track widget activity stats
 > * View articles data via admin dashboard
-> * Get answer to your support question within one business day ([Support Policy](http://bestwebsoft.com/support-policy/))
+> * Get answer to your support question within one business day ([Support Policy](https://bestwebsoft.com/support-policy/))
 >
-> [Upgrade to Pro Now](http://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=bd5514f32d2c5691ebcad50c03ab3139)
+> [Upgrade to Pro Now](https://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=bd5514f32d2c5691ebcad50c03ab3139)
 
-If you have a feature suggestion or idea you'd like to see in the plugin, we'd love to hear about it! [Suggest a Feature](http://support.bestwebsoft.com/hc/en-us/requests/new)
+If you have a feature suggestion or idea you'd like to see in the plugin, we'd love to hear about it! [Suggest a Feature](https://support.bestwebsoft.com/hc/en-us/requests/new)
 
 = Documentation & Videos =
 
-* [[Doc] Installation](https://docs.google.com/document/d/1Y-eA3oEO_Z1GW0jK8uXGpW3qnxzPIQ2jMBP6ylcWKwo/)
+* [[Doc] Installation](https://docs.google.com/document/d/1-hvn6WRvWnOqj5v5pLUk7Awyu87lq5B_dO-Tv-MC9JQ/)
+* [[Doc] Purchase](https://docs.google.com/document/d/1EUdBVvnm7IHZ6y0DNyldZypUQKpB8UVPToSc_LdOYQI/)
 * [[Video] Installation Instruction](http://www.youtube.com/watch?v=0QatAvYLxMM)
 
 = Help & Support =
 
-Visit our Help Center if you have any questions, our friendly Support Team is happy to help — <http://support.bestwebsoft.com/>
+Visit our Help Center if you have any questions, our friendly Support Team is happy to help — <https://support.bestwebsoft.com/>
 
 = Translation =
 
 * Russian (ru_RU)
 * Ukrainian (uk)
 
-Some of these translations are not complete. We are constantly adding new features which should be translated. If you would like to create your own language pack or update the existing one, you can send [the text of PO and MO files](http://codex.wordpress.org/Translating_WordPress) to [BestWebSoft](http://support.bestwebsoft.com/hc/en-us/requests/new) and we'll add it to the plugin. You can download the latest version of the program for work with PO and MO [files Poedit](http://www.poedit.net/download.php).
+Some of these translations are not complete. We are constantly adding new features which should be translated. If you would like to create your own language pack or update the existing one, you can send [the text of PO and MO files](http://codex.wordpress.org/Translating_WordPress) to [BestWebSoft](https://support.bestwebsoft.com/hc/en-us/requests/new) and we'll add it to the plugin. You can download the latest version of the program for work with PO and MO [files Poedit](http://www.poedit.net/download.php).
 
 = Recommended Plugins =
 
-* [Updater](http://bestwebsoft.com/products/wordpress/plugins/updater/?k=2e2068a98f911bf0f112b67557e26f77) - Automatically check and update WordPress core with all installed plugins to the latest versions. Manual mode, email notifications and backups of all your files and database before updating.
-
-= Donate =
-
-Donations play an important role in supporting open-source projects. We greatly appreciate any donation you can make to help us continue further development of free products.
-
-[Donate Now](http://bestwebsoft.com/donate/)
+* [Updater](https://bestwebsoft.com/products/wordpress/plugins/updater/?k=2e2068a98f911bf0f112b67557e26f77) - Automatically check and update WordPress core with all installed plugins to the latest versions. Manual mode, email notifications and backups of all your files and database before updating.
 
 == Installation ==
 
@@ -81,9 +76,9 @@ Donations play an important role in supporting open-source projects. We greatly 
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Plugin settings are located in 'BWS Panel', 'Zendesk HC'.
 
-[View a Step-by-step Instruction on Zendesk HC Installation](https://docs.google.com/document/d/1Y-eA3oEO_Z1GW0jK8uXGpW3qnxzPIQ2jMBP6ylcWKwo/)
+[View a Step-by-step Instruction on Zendesk HC Installation](https://docs.google.com/document/d/1-hvn6WRvWnOqj5v5pLUk7Awyu87lq5B_dO-Tv-MC9JQ/)
 
-http://www.youtube.com/watch?v=0QatAvYLxMM
+https://www.youtube.com/watch?v=0QatAvYLxMM
 
 == Frequently Asked Questions ==
 
@@ -112,7 +107,7 @@ No, the plugin merely creates a backup of your data from Zendesk HC you specifie
 
 = I have some problems with the plugin's work. What Information should I provide to receive proper support? =
 
-Please make sure that the problem hasn't been discussed yet on our forum (<http://support.bestwebsoft.com>). If no, please provide the following data along with your problem's description:
+Please make sure that the problem hasn't been discussed yet on our forum (<https://support.bestwebsoft.com>). If no, please provide the following data along with your problem's description:
 
 1. the link to the page where the problem occurs
 2. the name of the plugin and its version. If you are using a pro version - your order number.
@@ -125,6 +120,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<http:
 2. Plugin settings page.
 
 == Changelog ==
+
+= V1.0.5 - 17.04.2017 =
+* Bugfix : Multiple Cross-Site Scripting (XSS) vulnerability was fixed.
 
 = V1.0.4 - 13.10.2016 =
 * Update : BWS plugins section is updated.
@@ -164,6 +162,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<http:
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.0.5 =
+* Bugs fixed.
 
 = V1.0.4 =
 * Plugin optimization completed.
