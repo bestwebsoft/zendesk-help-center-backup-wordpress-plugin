@@ -6,7 +6,7 @@ Description: Backup and export Zendesk Help Center content automatically to your
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.5
+Version: 1.0.6
 Author URI: https://bestwebsoft.com/
 License: GPLv3 or later
 */
@@ -434,15 +434,11 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 							<td>
 								<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $zndskhc_options['subdomain']; ?>" /> 
 								<?php _e( 'subdomain', 'zendesk-help-center' ); ?> 
-								<div class="bws_help_box dashicons dashicons-editor-help">
-									<div class="bws_hidden_help_text" style="min-width: 100px;">
-										<?php printf( 
-											__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
-											'<i>https://mysubdomain.zendesk.com</i>',
-											'<i>mysubdomain</i>'
-										); ?>
-									</div>
-								</div>
+								<?php echo bws_add_help_box( sprintf( 
+									__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
+									'<i>https://mysubdomain.zendesk.com</i>',
+									'<i>mysubdomain</i>'
+								) ); ?>
 								<br />
 								<input type="text" maxlength='250' name="zndskhc_user" value="<?php echo $zndskhc_options['user']; ?>" /> <?php _e( 'user', 'zendesk-help-center' ); ?><br />
 								<input type="password" maxlength='250' name="zndskhc_password" value="<?php echo $zndskhc_options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?>
@@ -1347,6 +1343,8 @@ if ( ! function_exists( 'zndskhc_admin_js' ) ) {
 		if ( isset( $_REQUEST['page'] ) && 'zendesk_hc.php' == $_REQUEST['page'] ) {
 			wp_enqueue_style( 'zndskhc_stylesheet', plugins_url( 'css/style.css', __FILE__ ) );
 			wp_enqueue_script( 'zndskhc_script', plugins_url( 'js/script.js', __FILE__ ) );
+
+			bws_enqueue_settings_scripts();
 		}
 	}
 }
