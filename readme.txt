@@ -3,8 +3,8 @@ Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: backup, backup data, database, zendesk, zendesk plugin, zendesk help center, zendesk help center backup, zendesk backup log, zendesk data to database, backup time, help center, save zendesk center data
 Requires at least: 4.0
-Tested up to: 4.8
-Stable tag: 1.0.6
+Tested up to: 4.9.1
+Stable tag: 1.0.7
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -32,7 +32,7 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 * Log backups
 * Email notifications in case of backup failure
 * Set the time period for Zendesk Help Center synchronization
-* Compatible with latest WordPress version 
+* Compatible with latest WordPress version
 * Incredibly simple settings for fast setup without modifying code
 * Detailed step-by-step documentation and videos
 
@@ -40,7 +40,7 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 >
 > All features from Free version included plus:
 >
-> * Add and configure enhanced Zendesk Help Center widget 
+> * Add and configure enhanced Zendesk Help Center widget
 > * Track widget activity stats
 > * View articles data via admin dashboard
 > * Get answer to your support question within one business day ([Support Policy](https://bestwebsoft.com/support-policy/))
@@ -57,7 +57,7 @@ If you have a feature suggestion or idea you'd like to see in the plugin, we'd l
 
 = Help & Support =
 
-Visit our Help Center if you have any questions, our friendly Support Team is happy to help — <https://support.bestwebsoft.com/>
+Visit our Help Center if you have any questions, our friendly Support Team is happy to help - <https://support.bestwebsoft.com/>
 
 = Translation =
 
@@ -93,17 +93,17 @@ The plugin creates a backup of the following Zendesk Help Center data:
 - Article Labels
 - Article Attachments
 
-= Are Article Attachments saved? = 
+= Are Article Attachments saved? =
 
-Yes, Article Attachments are located in WordPress Downloads folder in "zendesk_hc_attachments" folder. 
+Yes, Article Attachments are located in WordPress Downloads folder in "zendesk_hc_attachments" folder.
 
 = Does the plugin store backups by versions? =
 
-No, solely the current (pending) backup version is kept. For instance, if some elements were deleted from your Zendesk Help Center, when synchronizing (creating a backup) this data will also be removed. 
+No, solely the current (pending) backup version is kept. For instance, if some elements were deleted from your Zendesk Help Center, when synchronizing (creating a backup) this data will also be removed.
 
 = Does the plugin display the data from Zendesk HC? =
 
-No, the plugin merely creates a backup of your data from Zendesk HC you specified to the database. 
+No, the plugin merely creates a backup of your data from Zendesk HC you specified to the database.
 
 = I have some problems with the plugin's work. What Information should I provide to receive proper support? =
 
@@ -120,6 +120,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 2. Plugin settings page.
 
 == Changelog ==
+
+= V1.0.7 - 11.01.2018 =
+* Bugfix : Options of record to the database is fixed.
+* Update : The "token" field has been added to the plugin settings page.
 
 = V1.0.6 - 18.07.2017 =
 * Update : All functionality for WordPress 4.8 was updated.
@@ -165,6 +169,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.0.7 =
+* Bugs fixed.
 
 = V1.0.6 =
 * The compatibility with new WordPress version updated.

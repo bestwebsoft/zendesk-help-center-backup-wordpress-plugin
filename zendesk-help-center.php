@@ -6,15 +6,15 @@ Description: Backup and export Zendesk Help Center content automatically to your
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.6
+Version: 1.0.7
 Author URI: https://bestwebsoft.com/
 License: GPLv3 or later
 */
- 
+
 /*  © Copyright 2017  BestWebSoft  ( https://support.bestwebsoft.com )
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -51,8 +51,9 @@ if ( ! function_exists ( 'zndskhc_init' ) ) {
 		bws_include_init( plugin_basename( __FILE__ ) );
 
 		if ( empty( $zndskhc_plugin_info ) ) {
-			if ( ! function_exists( 'get_plugin_data' ) )
+			if ( ! function_exists( 'get_plugin_data' ) ) {
 				require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			}
 			$zndskhc_plugin_info = get_plugin_data( __FILE__ );
 		}
 
@@ -65,9 +66,10 @@ if ( ! function_exists( 'zndskhc_admin_init' ) ) {
 	function zndskhc_admin_init() {
 		global $bws_plugin_info, $zndskhc_plugin_info;
 
-		if ( empty( $bws_plugin_info ) )			
-			$bws_plugin_info = array( 'id' => '208', 'version' => $zndskhc_plugin_info["Version"] );		
-		
+		if ( empty( $bws_plugin_info ) ) {
+			$bws_plugin_info = array( 'id' => '208', 'version' => $zndskhc_plugin_info["Version"] );
+		}
+
 		/* Call register settings function */
 		if ( isset( $_GET['page'] ) && "zendesk_hc.php" == $_GET['page'] ) {
 			register_zndskhc_settings();
@@ -81,7 +83,7 @@ if ( ! function_exists( 'zndskhc_admin_init' ) ) {
 if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 	function register_zndskhc_settings() {
 		global $zndskhc_options, $zndskhc_plugin_info, $zndskhc_options_default;
-		$plugin_db_version = '1.0';
+		$plugin_db_version = '1.3';
 
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
 		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
@@ -95,8 +97,9 @@ if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 			'subdomain'					=> '',
 			'user'						=> '',
 			'password'					=> '',
+			'token'						=> '',
 			'time'						=> '48',
-			'backup_elements'			=> array( 
+			'backup_elements'			=> array(
 				'categories'	=> '1',
 				'sections'		=> '1',
 				'articles'		=> '1',
@@ -109,12 +112,13 @@ if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 			'last_synch'				=> '',
 			'display_settings_notice'	=>	1,
 			'suggest_feature_banner'	=>	1,
-			'first_install'				=>	strtotime( "now" )		
+			'first_install'				=>	strtotime( "now" )
 		);
 
 		/* Install the option defaults */
-		if ( ! get_option( 'zndskhc_options' ) )
+		if ( ! get_option( 'zndskhc_options' ) ) {
 			add_option( 'zndskhc_options', $zndskhc_options_default );
+		}
 
 		$zndskhc_options = get_option( 'zndskhc_options' );
 
@@ -132,11 +136,23 @@ if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 
 		if ( ! isset( $zndskhc_options['plugin_db_version'] ) || $zndskhc_options['plugin_db_version'] < $plugin_db_version ) {
 			zndskhc_db_table();
+			/**
+			 * @deprecated since 1.0.8
+			 * @todo remove after 20.09.2018
+			 */
+			if ( isset( $zndskhc_options['plugin_db_version'] ) &&
+				version_compare( $zndskhc_options['plugin_db_version'] , '1.3', '<' ) &&
+				function_exists( 'zndskhc_db_update' ) ) {
+				zndskhc_db_update();
+			}
+			/* end deprecated */
+
 			$zndskhc_options['plugin_db_version'] = $plugin_db_version;
 			$update_option = true;
 		}
-		if ( isset( $update_option ) )
+		if ( isset( $update_option ) ) {
 			update_option( 'zndskhc_options', $zndskhc_options );
+		}
 	}
 }
 
@@ -146,7 +162,7 @@ if ( ! function_exists( 'zndskhc_db_table' ) ) {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		$sql = "CREATE TABLE `" . $wpdb->prefix . "zndskhc_categories` (
-			`id` int NOT NULL,
+			`id` bigint UNSIGNED NOT NULL,
 			`position` int NOT NULL,
 			`updated_at` datetime NOT NULL,
 			`name` char(255) NOT NULL,
@@ -158,8 +174,8 @@ if ( ! function_exists( 'zndskhc_db_table' ) ) {
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE `" . $wpdb->prefix . "zndskhc_sections` (
-			`id` int NOT NULL,
-			`category_id` int NOT NULL,
+			`id` bigint UNSIGNED NOT NULL,
+			`category_id` bigint UNSIGNED NOT NULL,
 			`position` int NOT NULL,
 			`updated_at` datetime NOT NULL,
 			`name` char(255) NOT NULL,
@@ -169,13 +185,13 @@ if ( ! function_exists( 'zndskhc_db_table' ) ) {
 			UNIQUE KEY id (id)
 		);";
 		dbDelta( $sql );
-		
+
 		$sql = "CREATE TABLE `" . $wpdb->prefix . "zndskhc_articles` (
-			`id` int NOT NULL,
-			`category_id` int NOT NULL,
-			`section_id` int,
+			`id` bigint UNSIGNED NOT NULL,
+			`category_id` bigint UNSIGNED NOT NULL,
+			`section_id` bigint UNSIGNED NOT NULL,
 			`position` int NOT NULL,
-			`author_id` int NOT NULL,
+			`author_id` bigint UNSIGNED NOT NULL,
 			`comments_disabled` int(1) NOT NULL,
 			`promoted` int(1) NOT NULL,
 			`updated_at` datetime NOT NULL,
@@ -187,44 +203,80 @@ if ( ! function_exists( 'zndskhc_db_table' ) ) {
 			`labels` char(255),
 			UNIQUE KEY id (id)
 		);";
-		dbDelta( $sql );	
+		dbDelta( $sql );
 
 		$sql = "CREATE TABLE `" . $wpdb->prefix . "zndskhc_labels` (
-			`id` int NOT NULL,
+			`id` bigint UNSIGNED NOT NULL,
 			`name` char(255) NOT NULL,
-			`updated_at` datetime NOT NULL,			
+			`updated_at` datetime NOT NULL,
 			UNIQUE KEY id (id)
 		);";
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE `" . $wpdb->prefix . "zndskhc_comments` (
-			`id` int NOT NULL,
-			`author_id` int NOT NULL,
+			`id` bigint UNSIGNED NOT NULL,
+			`author_id` bigint UNSIGNED NOT NULL,
 			`source_type` char(255) NOT NULL,
-			`source_id` int NOT NULL,
+			`source_id` bigint UNSIGNED NOT NULL,
 			`body` text NOT NULL,
 			`locale` char(5) NOT NULL,
-			`updated_at` datetime NOT NULL,			
+			`updated_at` datetime NOT NULL,
 			UNIQUE KEY id (id)
 		);";
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE `" . $wpdb->prefix . "zndskhc_attachments` (
-			`id` int NOT NULL,
+			`id` bigint UNSIGNED NOT NULL,
 			`url` char(255) NOT NULL,
-			`article_id` int NOT NULL,
+			`article_id` bigint UNSIGNED NOT NULL,
 			`file_name` char(255) NOT NULL,
 			`content_url` char(255) NOT NULL,
 			`content_type` char(255) NOT NULL,
 			`size` int NOT NULL,
 			`inline` TINYINT(1) NOT NULL,
-			`created_at` datetime NOT NULL,			
-			`updated_at` datetime NOT NULL,			
+			`created_at` datetime NOT NULL,
+			`updated_at` datetime NOT NULL,
 			UNIQUE KEY id (id)
 		);";
 		dbDelta( $sql );
 	}
 }
+
+/**
+ *
+ * @deprecated since 1.0.8
+ * @todo remove after 20.09.2018
+ */
+if ( ! function_exists( 'zndskhc_db_update' ) ) {
+	function zndskhc_db_update() {
+		global $wpdb;
+
+		$tables = array(
+			'zndskhc_categories',
+			'zndskhc_sections',
+			'zndskhc_articles',
+			'zndskhc_labels',
+			'zndskhc_comments',
+			'zndskhc_attachments',
+		);
+
+		foreach ( $tables as $table_name ) {
+			$column_exists = $wpdb->query( "SHOW COLUMNS FROM `" . $wpdb->prefix . "{$table_name}` LIKE '%id';" );
+			if ( 0 != $column_exists ) {
+				$wpdb->query( "ALTER TABLE `" . $wpdb->prefix . "{$table_name}` CHANGE (
+					`id` `id` BIGINT UNSIGNED NOT NULL,
+					`section_id` `section_id` BIGINT UNSIGNED NOT NULL,
+					`author_id` `author_id` BIGINT UNSIGNED NOT NULL,
+					`article_id` `article_id` BIGINT UNSIGNED NOT NULL,
+					`author_id` `author_id` BIGINT UNSIGNED NOT NULL,
+					`source_id` `source_id` BIGINT UNSIGNED NOT NULL,
+					`category_id` `category_id` BIGINT UNSIGNED NOT NULL
+				);" );
+			}
+		}
+	}
+}
+/* end deprecated */
 
 if ( ! function_exists( 'zndskhc_activation_hook' ) ) {
 	function zndskhc_activation_hook() {
@@ -256,56 +308,60 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 				$log_size = 0;
 				fclose( $handle );
 			} else {
-				$log_error = __( "Error creating log file" , 'zendesk-help-center' ) . ' ' . $file_check_name . '.';	
+				$log_error = __( "Error creating log file" , 'zendesk-help-center' ) . ' ' . $file_check_name . '.';
 			}
 		}
 
-		if ( isset( $_GET['action'] ) && $_GET['action'] == 'settings' ) {			
+		if ( isset( $_GET['action'] ) && 'settings' == $_GET['action'] ) {
 			if ( file_exists( $file_check_name ) ) {
 				$log_size = round( filesize( dirname( __FILE__ )  . "/backup.log" ) / 1024, 2 );
 			}
 		}
 
-		if ( ! empty( $zndskhc_error ) )
+		if ( ! empty( $zndskhc_error ) ) {
 			$error = $zndskhc_error;
+		}
 
 		if ( isset( $_REQUEST['zndskhc_synch'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name' ) ) {
 			$result = zndskhc_synchronize( false );
-			if ( true !== $result )
+			if ( true !== $result ) {
 				$error = $result;
-			else
-				$message = __( "Data is updated successfully" , 'zendesk-help-center' );	
+			} else {
+				$message = __( "Data is successfully updated" , 'zendesk-help-center' );
+			}
 		}
 
-		if ( isset( $_REQUEST['zndskhc_submit_clear'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name' ) ) {			
+		if ( isset( $_REQUEST['zndskhc_submit_clear'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name' ) ) {
 			if ( $handle = fopen( $file_check_name, "w" ) ) {
 				fwrite( $handle, '' );
 				fclose( $handle );
-				@chmod( $file_check_name, 0755 );	
+				@chmod( $file_check_name, 0755 );
 				$message = __( "The log file is cleared." , 'zendesk-help-center' );
 				$log_size = 0;
 			} else
 				$error = __( "Couldn't clear log file" , 'zendesk-help-center' );
 		}
 
-		if ( isset( $_REQUEST['zndskhc_submit'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name' ) ) {	
+		if ( isset( $_REQUEST['zndskhc_submit'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name' ) ) {
 			if ( isset( $_POST['bws_hide_premium_options'] ) ) {
 				$hide_result = bws_hide_premium_options( $zndskhc_options );
 				$zndskhc_options = $hide_result['options'];
-			}		
+			}
 			$zndskhc_options['subdomain'] 	= stripslashes( esc_html( $_REQUEST['zndskhc_subdomain'] ) );
 			$zndskhc_options['user'] 		= stripslashes( esc_html( $_REQUEST['zndskhc_user'] ) );
 			$zndskhc_options['password'] 	= stripslashes( esc_html( $_REQUEST['zndskhc_password'] ) );
+			$zndskhc_options['token'] 		= stripslashes( esc_html( $_REQUEST['zndskhc_token'] ) );
 			if ( $zndskhc_options['time'] != intval( $_REQUEST['zndskhc_time'] ) ) {
 				$zndskhc_options['time'] = intval( $_REQUEST['zndskhc_time'] );
 				/* Add or delete hook of auto/handle mode */
-				if ( wp_next_scheduled( 'auto_synchronize_zendesk_hc' ) )
+				if ( wp_next_scheduled( 'auto_synchronize_zendesk_hc' ) ) {
 					wp_clear_scheduled_hook( 'auto_synchronize_zendesk_hc' );
+				}
 
 				if ( '0' != $zndskhc_options['time'] ) {
 					$time = time() + $zndskhc_options['time']*60*60;
 					wp_schedule_event( $time, 'schedules_hours', 'auto_synchronize_zendesk_hc' );
-				}				
+				}
 			}
 			$zndskhc_options['backup_elements']['categories'] = ( isset( $_REQUEST['zndskhc_categories_backup'] ) ) ? 1 : 0;
 			$zndskhc_options['backup_elements']['sections'] = ( isset( $_REQUEST['zndskhc_sections_backup'] ) ) ? 1 : 0;
@@ -314,10 +370,11 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 			$zndskhc_options['backup_elements']['labels'] = ( isset( $_REQUEST['zndskhc_labels_backup'] ) ) ? 1 : 0;
 			$zndskhc_options['backup_elements']['attachments'] = ( isset( $_REQUEST['zndskhc_attachments_backup'] ) && isset( $_REQUEST['zndskhc_articles_backup'] ) ) ? 1 : 0;
 
-			$zndskhc_options['emailing_fail_backup'] 	=  isset( $_REQUEST['zndskhc_emailing_fail_backup'] ) ? 1 : 0;
+			$zndskhc_options['emailing_fail_backup'] = isset( $_REQUEST['zndskhc_emailing_fail_backup'] ) ? 1 : 0;
 			$zndskhc_options['email'] 	= stripslashes( esc_html( $_REQUEST['zndskhc_email'] ) );
-			if ( ! is_email( $zndskhc_options['email'] ) )
+			if ( ! is_email( $zndskhc_options['email'] ) ) {
 				$zndskhc_options['email'] = $zndskhc_options_default['email'];
+			}
 
 			if ( empty( $error ) ) {
 				update_option( 'zndskhc_options', $zndskhc_options );
@@ -330,10 +387,11 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 		/* GO PRO */
 		if ( isset( $_GET['action'] ) && 'go_pro' == $_GET['action'] ) {
 			$go_pro_result = bws_go_pro_tab_check( $plugin_basename, 'zndskhc_options' );
-			if ( ! empty( $go_pro_result['error'] ) )
+			if ( ! empty( $go_pro_result['error'] ) ) {
 				$error = $go_pro_result['error'];
-			elseif ( ! empty( $go_pro_result['message'] ) )
+			} elseif ( ! empty( $go_pro_result['message'] ) ) {
 				$message = $go_pro_result['message'];
+			}
 		}
 
 		/* Add restore function */
@@ -346,7 +404,7 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 			<h1><?php _e( 'Zendesk HC Settings', 'zendesk-help-center' ); ?></h1>
 			<h2 class="nav-tab-wrapper">
 				<a class="nav-tab <?php if ( ! isset( $_GET['action'] ) ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php"><?php _e( 'Backup', 'zendesk-help-center' ); ?></a>
-				<a class="nav-tab <?php if ( isset( $_GET['action'] ) && $_GET['action'] == 'settings' ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php&amp;action=settings"><?php _e( 'Settings', 'zendesk-help-center' ); ?></a>
+				<a class="nav-tab <?php if ( isset( $_GET['action'] ) && 'settings' == $_GET['action'] ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php&amp;action=settings"><?php _e( 'Settings', 'zendesk-help-center' ); ?></a>
 				<a class="nav-tab bws_go_pro_tab<?php if ( isset( $_GET['action'] ) && 'go_pro' == $_GET['action'] ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php&amp;action=go_pro"><?php _e( 'Go PRO', 'zendesk-help-center' ); ?></a>
 			</h2>
 			<?php bws_show_settings_notice();
@@ -354,42 +412,43 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 				<div class="updated fade below-h2"><p><strong><?php echo $hide_result['message']; ?></strong></p></div>
 			<?php } ?>
 			<div class="updated fade below-h2" <?php if ( '' == $message || '' != $error ) echo "style=\"display:none\""; ?>><p><strong><?php echo $message; ?></strong></p></div>
-			<div class="error below-h2" <?php if ( '' == $error ) echo 'style="display:none"'; ?>><p><strong><?php echo $error; ?></strong></p></div>		
+			<div class="error below-h2" <?php if ( '' == $error ) echo 'style="display:none"'; ?>><p><strong><?php echo $error; ?></strong></p></div>
 			<?php if ( isset( $_REQUEST['bws_restore_default'] ) && check_admin_referer( $plugin_basename, 'bws_settings_nonce_name' ) ) {
 				bws_form_restore_default_confirm( $plugin_basename );
 			} elseif ( ! isset( $_GET['action'] ) ) {
 				if ( ! empty( $zndskhc_options['last_synch'] ) ) { ?>
 					<p><?php _e( 'Last synchronization with Zendesk HC was on' , 'zendesk-help-center' ); echo ' ' . $zndskhc_options['last_synch']; ?></p>
 				<?php }
-				
+
 				$current_exist_backup = array();
 
 				foreach ( $elements as $key => $value ) {
 						$count = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "zndskhc_" . $key . "`" );
-						if ( ! empty( $count ) )
+						if ( ! empty( $count ) ) {
 							$current_exist_backup[ $key ] = $count;
+						}
 				}
 
 				if ( ! empty( $current_exist_backup ) ) { ?>
 					<h3><?php _e( 'Export backup', 'zendesk-help-center' ); ?>:</h3>
 						<form method="post" action="">
 						<div>
-						 	<?php foreach ( $elements as $key => $value ) { 
+						 	<?php foreach ( $elements as $key => $value ) {
 						 		if ( array_key_exists( $key, $current_exist_backup ) ) { ?>
 									<label><input type="<?php echo ( $zndskhc_zip_exist ) ? 'checkbox' : 'radio'; ?>" name="zndskhc_export_element[]" value="<?php echo $key; ?>" /> <?php echo $value . ' (' . $current_exist_backup[ $key ] . ')'; ?></label><br />
 								<?php }
-							} 
+							}
 							if ( ! $zndskhc_zip_exist ) {
 								$upload_dir = wp_upload_dir();
 								echo '<span class="bws_info">' . __( 'There is no ZIP library on your server. You can download attachments manually from folder', 'zendesk-help-center' ) . ' ' . $upload_dir['basedir'] . '/zendesk_hc_attachments</span>';
 							} ?>
 						</div>
-						<p class="submit">						
+						<p class="submit">
 							<input type="submit" class="button-primary zndskhc_submit_button zndskhc_export" value="<?php _e( 'Export', 'zendesk-help-center' ); ?>" />
 							<img class="zndskhc_loader" src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" />
 							<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name' ); ?>
 							<input type="hidden" name="zndskhc_export" value="submit" />
-						</p>					
+						</p>
 					</form>
 				<?php }
 
@@ -397,15 +456,15 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 					<div class="error below-h2"><p><?php echo $log_error; ?></p></div>
 				<?php } else
 					zndskhc_get_logs(); ?>
-				<form method="post" action="">					
-					<p class="submit">						
+				<form method="post" action="">
+					<p class="submit">
 						<input type="submit" class="button-primary zndskhc_submit_button" value="<?php _e( 'Synchronize now', 'zendesk-help-center' ); ?>" />
 						<img class="zndskhc_loader" src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" />
 						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name' ); ?>
 						<input type="hidden" name="zndskhc_synch" value="submit" />
-					</p>					
+					</p>
 				</form>
-			<?php } elseif ( isset( $_GET['action'] ) && $_GET['action'] == 'settings' ) {
+			<?php } elseif ( isset( $_GET['action'] ) && 'settings' == $_GET['action'] ) {
 				if ( ! empty( $log_error ) ) { ?>
 					<div class="error below-h2"><p><?php echo $log_error; ?></p></div>
 				<?php } else { ?>
@@ -426,22 +485,25 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 						<input type="hidden" name="zndskhc_submit_clear" value="submit" />
 						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name' ); ?>
 					</form>
-				<?php } ?>					
+				<?php } ?>
 				<form method="post" action="" class="bws_form">
 					<table class="form-table">
 						<tr valign="top">
 							<th scope="row"><?php _e( 'Zendesk Information', 'zendesk-help-center' ); ?></th>
 							<td>
-								<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $zndskhc_options['subdomain']; ?>" /> 
-								<?php _e( 'subdomain', 'zendesk-help-center' ); ?> 
-								<?php echo bws_add_help_box( sprintf( 
+								<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $zndskhc_options['subdomain']; ?>" />
+								<?php _e( 'subdomain', 'zendesk-help-center' ); ?>
+								<?php echo bws_add_help_box( sprintf(
 									__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
 									'<i>https://mysubdomain.zendesk.com</i>',
 									'<i>mysubdomain</i>'
 								) ); ?>
 								<br />
-								<input type="text" maxlength='250' name="zndskhc_user" value="<?php echo $zndskhc_options['user']; ?>" /> <?php _e( 'user', 'zendesk-help-center' ); ?><br />
-								<input type="password" maxlength='250' name="zndskhc_password" value="<?php echo $zndskhc_options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?>
+								<input type="text" maxlength='250' name="zndskhc_user" value="<?php echo $zndskhc_options['user']; ?>" /> <?php _e( 'email', 'zendesk-help-center' ); ?><br />
+								<input type="password" maxlength='250' name="zndskhc_password" value="<?php echo $zndskhc_options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?><br />
+								<input type="text" maxlength='250' name="zndskhc_token" value="<?php echo $zndskhc_options['token']; ?>" /> <?php _e( 'token', 'zendesk-help-center-pro' );
+								echo bws_add_help_box( __( 'Don\'t know how to generate API token? ', 'bestwebsoft' ) . ' <a href="https://support.bestwebsoft.com/hc/en-us/articles/115005881386" target="_new" >' . __( "Read the instruction", 'bestwebsoft' ) . '</a>' );
+								?>
 							</td>
 						</tr>
 						<tr valign="top">
@@ -498,14 +560,14 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 								<div class="clear"></div>
 							</div>
 						</div>
-					<?php } ?>				
+					<?php } ?>
 					<p class="submit">
 						<input type="hidden" name="zndskhc_submit" value="submit" />
-						<input id="bws-submit-button" type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'zendesk-help-center' ); ?>" />						
+						<input id="bws-submit-button" type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'zendesk-help-center' ); ?>" />
 						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name' ); ?>
-					</p>					
+					</p>
 				</form>
-				<?php bws_form_restore_default_settings( $plugin_basename );			
+				<?php bws_form_restore_default_settings( $plugin_basename );
 			} elseif ( 'go_pro' == $_GET['action'] ) {
 				bws_go_pro_tab_show( $bws_hide_premium_options_check, $zndskhc_plugin_info, $plugin_basename, 'zendesk_hc.php', 'zendesk_hc_pro.php', 'zendesk-help-center-pro/zendesk-help-center-pro.php', 'zendesk-help-center', 'f047e20c92c972c398187a4f70240285', '208', isset( $go_pro_result['pro_plugin_is_activated'] ) );
 			}
@@ -520,7 +582,7 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 
 		$zndskhc_zip_exist = class_exists( 'ZipArchive' );
 
-		if ( isset( $_REQUEST['zndskhc_export'] ) && check_admin_referer( plugin_basename(__FILE__), 'zndskhc_nonce_name' ) ) {
+		if ( isset( $_REQUEST['zndskhc_export'] ) && check_admin_referer( plugin_basename( __FILE__ ), 'zndskhc_nonce_name' ) ) {
 
 			if ( ! isset( $_POST["zndskhc_export_element"] ) ) {
 				$zndskhc_error = __( 'Please, choose at least one element.', 'zendesk-help-center' );
@@ -533,7 +595,7 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 
 					if ( ! empty( $results[ $element ] ) ) {
 						/* Write column names */
-						$colArray = array_keys( $results[ $element ][0] );					
+						$colArray = array_keys( $results[ $element ][0] );
 
 						$filename = tempnam( sys_get_temp_dir(), 'csv' );
 						$csv_filenames[ $element ] = $filename;
@@ -542,7 +604,7 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 						foreach ( $results[ $element ] as $result ) {
 							fputcsv( $file, $result, ';' );
 						}
-						fclose( $file );					
+						fclose( $file );
 					}
 				}
 
@@ -552,16 +614,16 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 						header( "Content-Disposition: attachment;Filename=zendesk_hc_backup_" . key( $csv_filenames ) . ".csv" );
 						/* Send file to browser */
 						readfile( $filename );
-						unlink( $filename );					
+						unlink( $filename );
 					} else {
 						/* create zip */
 						$filename_zip = tempnam( sys_get_temp_dir(), 'zip' );
-						$zip	= new ZipArchive();
-						
+						$zip = new ZipArchive();
+
 						if ( true === $zip->open( $filename_zip, ZIPARCHIVE::CREATE ) ) {
 							foreach ( $csv_filenames as $key => $value ) {
 								$zip->addFile( $value, $key . '.csv' );
-							}				
+							}
 
 							if ( array_key_exists( 'attachments', $csv_filenames ) ) {
 								$upload_dir = wp_upload_dir();
@@ -570,7 +632,7 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 								foreach ( $results['attachments'] as $key => $value ) {
 									$uploadfile = $folder . '/' . $value['id'] . '-' . $value['file_name'];
 									$zip->addFile( $uploadfile, 'attachments/' . $value['file_name'] );
-								}												
+								}
 							}
 
 							$zip->close();
@@ -587,7 +649,7 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 						}
 					}
 				}
-				exit();				
+				exit();
 			}
 		}
 	}
@@ -600,12 +662,16 @@ if ( ! function_exists( 'zndskhc_curl' ) ) {
 		curl_setopt( $ch, CURLOPT_URL, $url );
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "Accept: application/json" ) );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_USERPWD, $zndskhc_options['user'] . ':' . $zndskhc_options['password'] );
+		if ( ! empty( $zndskhc_options['token'] ) ) {
+			curl_setopt( $ch, CURLOPT_USERPWD, $zndskhc_options['user'] . '/token:' . $zndskhc_options['token'] );
+		} else {
+			curl_setopt( $ch, CURLOPT_USERPWD, $zndskhc_options['user'] . ':' . $zndskhc_options['password'] );
+		}
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		$json_resp = curl_exec( $ch );
 		$array_resp = json_decode( $json_resp, true );
 		curl_close( $ch );
-		if ( !is_array( $array_resp ) && empty( $array_resp ) && $attempt == 1 ) {
+		if ( !is_array( $array_resp ) && empty( $array_resp ) && ! empty( $attempt ) ) {
 			/* too many curl/ try again later */
 			sleep(5);
 			$array_resp = zndskhc_curl( $url, 2 );
@@ -618,13 +684,14 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 	function zndskhc_synchronize( $auto_mode = true ) {
 		global $wpdb, $zndskhc_options;
 
-		if ( empty( $zndskhc_options ) )
+		if ( empty( $zndskhc_options ) ) {
 			$zndskhc_options = get_option( 'zndskhc_options' );
+		}
 
 		if ( empty( $zndskhc_options['subdomain'] ) || empty( $zndskhc_options['user'] ) || empty( $zndskhc_options['password'] ) ) {
 			$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as some plugin settings are empty. To fix it go to', 'zendesk-help-center' ) . ' ' . __( 'settings page', 'zendesk-help-center' );
 			zndskhc_log( $log );
-			if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] ) {
+			if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as some plugin settings are empty. To fix it go to', 'zendesk-help-center' ) . ' <a href="' . get_admin_url( null, 'admin.php?page=zendesk_hc.php&action=settings' ) . '">' . __( 'settings page', 'zendesk-help-center' ) . '</a>.';
 				zndskhc_send_mail( $log );
 			}
@@ -634,14 +701,14 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 		if ( ! function_exists( 'curl_init' ) ) {
 			$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as this hosting does not support СURL.', 'zendesk-help-center' );
 			zndskhc_log( $log );
-			if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] ) {
+			if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 				zndskhc_send_mail( $log );
 			}
 			return $log;
 		}
 
 		/* get categories */
-		if ( 1 == $zndskhc_options['backup_elements']['categories'] ) {
+		if ( ! empty( $zndskhc_options['backup_elements']['categories'] ) ) {
 			$all_categories = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_categories`", ARRAY_A );
 			$added = $updated = $deleted = 0;
 			$i = 1;
@@ -649,12 +716,13 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 
 				$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/categories.json?page=' . $i . '&per_page=30';
 				$array_resp = zndskhc_curl( $url );
-				
+
 				if ( !is_array( $array_resp ) && empty( $array_resp ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Categories backup', 'zendesk-help-center' ) . ' - ' . __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+					if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 						zndskhc_send_mail( $log );
+					}
 					return $log;
 				}
 
@@ -666,12 +734,13 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 					} else {
 						$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Categories backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
 						zndskhc_log( $log );
-						if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+						if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 							zndskhc_send_mail( $log );
+						}
 						return $log;
 					}
 				} else {
-					
+
 					foreach ( $array_resp['categories'] as $key => $value ) {
 						$category = false;
 						foreach ( $all_categories as $key_cat => $value_cat ) {
@@ -683,15 +752,15 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 						}
 
 						if ( empty( $category ) ) {
-							$wpdb->insert( $wpdb->prefix . "zndskhc_categories", 
-								array( 'id' 			=> $value['id'], 
+							$wpdb->insert( $wpdb->prefix . "zndskhc_categories",
+								array( 'id' 			=> $value['id'],
 										'position' 		=> $value['position'],
 										'updated_at'	=> $value['updated_at'],
 										'name'			=> $value['name'],
 										'description'	=> $value['description'],
 										'locale'		=> $value['locale'],
 										'source_locale'	=> $value['source_locale'] ),
-								array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );	
+								array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );
 							$added++;
 						} elseif ( strtotime( $category['updated_at'] ) < strtotime( $value['updated_at'] ) ) {
 							$wpdb->update( $wpdb->prefix . "zndskhc_categories",
@@ -700,16 +769,16 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 										'name'			=> $value['name'],
 										'description'	=> $value['description'],
 										'locale'		=> $value['locale'],
-										'source_locale'	=> $value['source_locale'] ), 
+										'source_locale'	=> $value['source_locale'] ),
 								array( 'id' => $value['id'] ),
-								array(  '%s', '%s', '%s', '%s', '%s', '%s' ) ); 
+								array(  '%s', '%s', '%s', '%s', '%s', '%s' ) );
 							$updated++;
 						}
+					}
 
-					}										
-
-					if ( empty( $array_resp['next_page'] ) )
+					if ( empty( $array_resp['next_page'] ) ) {
 						break;
+					}
 				}
 				$i++;
 			}
@@ -723,32 +792,36 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 
 			if ( $added != 0 || $updated != 0 || $deleted != 0 ) {
 				$log = __( 'Categories backup', 'zendesk-help-center' ) . ':';
-				if ( $added != 0 )
+				if ( $added != 0 ) {
 					$log .= ' ' . $added . ' ' . __( 'added', 'zendesk-help-center' ) . ';';
-				if ( $updated != 0 )
+				}
+				if ( $updated != 0 ) {
 					$log .= ' ' . $updated . ' ' . __( 'updated', 'zendesk-help-center' ) . ';';
-				if ( $deleted != 0 )
+				}
+				if ( $deleted != 0 ) {
 					$log .= ' ' . $deleted . ' ' . __( 'deleted', 'zendesk-help-center' ) . ';';
+				}
 				zndskhc_log( $log );
 			}
 		}
 
 		/* get sections */
-		if ( 1 == $zndskhc_options['backup_elements']['sections'] ) {
+		if ( ! empty( $zndskhc_options['backup_elements']['sections'] ) ) {
 			$all_sections = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_sections`", ARRAY_A );
 			$added = $updated = $deleted = 0;
 			$i = 1;
 			while ( $i != false ) {
 				$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/sections.json?page=' . $i . '&per_page=30';
 				$array_resp = zndskhc_curl( $url );
-				
+
 				if ( !is_array( $array_resp ) && empty( $array_resp ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Sections backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+					if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 						zndskhc_send_mail( $log );
+					}
 					return $log;
-				} 
+				}
 
 				if ( isset( $array_resp['error'] ) ) {
 					if ( 'RecordNotFound' == $array_resp['error'] ) {
@@ -758,12 +831,13 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 					} else {
 						$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Sections backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
 						zndskhc_log( $log );
-						if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+						if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 							zndskhc_send_mail( $log );
+						}
 						return $log;
 					}
 				} else {
-					
+
 					foreach ( $array_resp['sections'] as $key => $value ) {
 						$section = false;
 						foreach ( $all_sections as $key_sec => $value_sec ) {
@@ -773,10 +847,10 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 								break;
 							}
 						}
-						
+
 						if ( empty( $section ) ) {
-							$wpdb->insert( $wpdb->prefix . "zndskhc_sections", 
-								array( 'id' 			=> $value['id'], 
+							$wpdb->insert( $wpdb->prefix . "zndskhc_sections",
+								array( 'id' 			=> $value['id'],
 										'category_id'	=> $value['category_id'],
 										'position' 		=> $value['position'],
 										'updated_at'	=> $value['updated_at'],
@@ -784,7 +858,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 										'description'	=> $value['description'],
 										'locale'		=> $value['locale'],
 										'source_locale'	=> $value['source_locale'] ),
-								array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );	
+								array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );
 							$added++;
 						} elseif ( strtotime( $section['updated_at'] ) < strtotime( $value['updated_at'] ) ) {
 							$wpdb->update( $wpdb->prefix . "zndskhc_sections",
@@ -794,15 +868,16 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 										'name'			=> $value['name'],
 										'description'	=> $value['description'],
 										'locale'		=> $value['locale'],
-										'source_locale'	=> $value['source_locale'] ), 
+										'source_locale'	=> $value['source_locale'] ),
 								array( 'id' => $value['id'] ),
-								array(  '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ); 
+								array(  '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );
 							$updated++;
-						}				
-					}									
+						}
+					}
 
-					if ( empty( $array_resp['next_page'] ) )
+					if ( empty( $array_resp['next_page'] ) ) {
 						break;
+					}
 				}
 				$i++;
 			}
@@ -816,18 +891,21 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 
 			if ( $added != 0 || $updated != 0 || $deleted != 0 ) {
 				$log = __( 'Sections backup', 'zendesk-help-center' ) . ':';
-				if ( $added != 0 )
+				if ( $added != 0 ) {
 					$log .= ' ' . $added . ' ' . __( 'added', 'zendesk-help-center' ) . ';';
-				if ( $updated != 0 )
+				}
+				if ( $updated != 0 ) {
 					$log .= ' ' . $updated . ' ' . __( 'updated', 'zendesk-help-center' ) . ';';
-				if ( $deleted != 0 )
+				}
+				if ( $deleted != 0 ) {
 					$log .= ' ' . $deleted . ' ' . __( 'deleted', 'zendesk-help-center' ) . ';';
+				}
 				zndskhc_log( $log );
 			}
 		}
-		
+
 		/* get articles */
-		if ( 1 == $zndskhc_options['backup_elements']['articles'] ) {
+		if ( ! empty( $zndskhc_options['backup_elements']['articles'] ) ) {
 			$all_articles = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_articles`", ARRAY_A );
 			$added = $updated = $deleted = 0;
 			$added_comment = $updated_comment = $deleted_comment = 0;
@@ -842,19 +920,21 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 				if ( ! is_array( $array_resp ) && empty( $array_resp ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Articles backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+					if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 						zndskhc_send_mail( $log );
+					}
 					return $log;
-				} 
+				}
 
 				if ( isset( $array_resp['error'] ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Articles backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
 					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+					if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 						zndskhc_send_mail( $log );
+					}
 					return $log;
-				} else {									
-					
+				} else {
+
 					foreach ( $array_resp["articles"] as $key => $value ) {
 						if ( $value['draft'] != true ) {
 
@@ -868,14 +948,16 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 								}
 							}
 
-							if ( ! isset( $value['category_id'] ) )
+							if ( ! isset( $value['category_id'] ) ) {
 								$value['category_id'] = 0;
-							if ( ! isset( $value['labels'] ) )
+							}
+							if ( ! isset( $value['labels'] ) ) {
 								$value['labels'] = '';
+							}
 
 							if ( empty( $article ) ) {
-								$wpdb->insert( $wpdb->prefix . "zndskhc_articles", 
-									array( 'id' 				=> $value['id'], 
+								$wpdb->insert( $wpdb->prefix . "zndskhc_articles",
+									array( 'id' 				=> $value['id'],
 											'category_id'		=> $value['category_id'],
 											'section_id'		=> $value['section_id'],
 											'position' 			=> $value['position'],
@@ -888,7 +970,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 											'locale'			=> $value['locale'],
 											'source_locale'		=> $value['source_locale'],
 											'labels'			=> $value['labels'] ),
-									array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );	
+									array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );
 								$added++;
 								$new_or_updated = true;
 							} elseif ( strtotime( $article['updated_at'] ) < strtotime( $value['updated_at'] ) ) {
@@ -903,15 +985,15 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 											'body'				=> $value['body'],
 											'locale'			=> $value['locale'],
 											'source_locale'		=> $value['source_locale'],
-											'labels'			=> $value['labels'] ), 
+											'labels'			=> $value['labels'] ),
 									array( 'id' => $value['id'] ),
 									array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );
 								$updated++;
 								$new_or_updated = true;
 							}
-							
+
 							/* get articles comments */
-							if ( $new_or_updated && 1 == $zndskhc_options['backup_elements']['comments'] ) {
+							if ( $new_or_updated && ! empty( $zndskhc_options['backup_elements']['comments'] ) ) {
 								$all_article_comments = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_comments` WHERE `source_id` = '" . $value['id'] . "' AND `source_type` = 'Article'", ARRAY_A );
 								$product_url_stat = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/articles/' . $value['id'] . '/comments.json';
 								$array_resp_comments = zndskhc_curl( $product_url_stat );
@@ -919,18 +1001,20 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 								if ( !is_array( $array_resp_comments ) && empty( $array_resp_comments ) ) {
 									$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Comments backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 									zndskhc_log( $log );
-									if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+									if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 										zndskhc_send_mail( $log );
+									}
 									return $log;
 								}
 
 								if ( isset( $array_resp_comments['error'] ) ) {
 									$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Comments backup', 'zendesk-help-center' ) . ' - ' . $array_resp_comments['error'] . ' (' . $array_resp_comments['description'] . ')';
 									zndskhc_log( $log );
-									if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+									if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 										zndskhc_send_mail( $log );
+									}
 									return $log;
-								} else {								
+								} else {
 									foreach ( $array_resp_comments["comments"] as $comments_key => $comments_value ) {
 
 										$comment = false;
@@ -941,17 +1025,17 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 												break;
 											}
 										}
-									
+
 										if ( empty( $comment ) ) {
-											$wpdb->insert( $wpdb->prefix . "zndskhc_comments", 
-												array( 'id' 				=> $comments_value['id'], 
+											$wpdb->insert( $wpdb->prefix . "zndskhc_comments",
+												array( 'id' 				=> $comments_value['id'],
 														'author_id' 		=> $comments_value['author_id'],
 														'source_type' 		=> $comments_value['source_type'],
 														'source_id' 		=> $comments_value['source_id'],
 														'body'				=> $comments_value['body'],
 														'locale'			=> $comments_value['locale'],
 														'updated_at'		=> $comments_value['updated_at'] ),
-												array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );	
+												array( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) );
 											$added_comment++;
 										} elseif ( strtotime( $comment['updated_at'] ) < strtotime( $comments_value['updated_at'] ) ) {
 											$wpdb->update( $wpdb->prefix . "zndskhc_comments",
@@ -960,7 +1044,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 														'source_id' 		=> $comments_value['source_id'],
 														'body'				=> $comments_value['body'],
 														'locale'			=> $comments_value['locale'],
-														'updated_at'		=> $comments_value['updated_at'] ), 
+														'updated_at'		=> $comments_value['updated_at'] ),
 												array( 'id' => $comments_value['id'] ),
 												array( '%s', '%s', '%s', '%s', '%s', '%s' ) );
 											$updated_comment++;
@@ -973,10 +1057,10 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 										}
 									}
 								}
-							}	
+							}
 
 							/* get attachments */
-							if ( $new_or_updated && 1 == $zndskhc_options['backup_elements']['attachments'] ) {			
+							if ( $new_or_updated && ! empty( $zndskhc_options['backup_elements']['attachments'] ) ) {
 								$all_attachments = $wpdb->get_results( "SELECT `id`, `updated_at`, `file_name` FROM `" . $wpdb->prefix . "zndskhc_attachments` WHERE `article_id`='" . $value['id'] . "'", ARRAY_A );
 								$k = 1;
 								while ( $k != false ) {
@@ -986,16 +1070,18 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 									if ( !is_array( $array_resp_attach ) && empty( $array_resp_attach ) ) {
 										$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Attachments backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 										zndskhc_log( $log );
-										if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+										if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 											zndskhc_send_mail( $log );
+										}
 										return $log;
 									}
 
 									if ( isset( $array_resp_attach['error'] ) ) {
 										$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Attachments backup', 'zendesk-help-center' ) . ' - ' . $array_resp_attach['error'] . ' (' . $array_resp_attach['description'] . ')';
 										zndskhc_log( $log );
-										if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+										if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 											zndskhc_send_mail( $log );
+										}
 										return $log;
 									} else {
 										foreach ( $array_resp_attach["article_attachments"] as $attach_key => $attach_value ) {
@@ -1014,8 +1100,8 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 													$attachments_backup_error_current = true;
 													$attachments_backup_error .= __( 'Error adding file', 'zendesk-help-center' ) . ' ' . $attach_value['id'] . '-' . $attach_value['file_name'] . '. ';
 												} else {
-													$wpdb->insert( $wpdb->prefix . "zndskhc_attachments", 
-														array( 'id' 			=> $attach_value['id'], 
+													$wpdb->insert( $wpdb->prefix . "zndskhc_attachments",
+														array( 'id' 			=> $attach_value['id'],
 																'url'			=> $attach_value['url'],
 																'article_id'	=> $attach_value['article_id'],
 																'file_name'		=> $attach_value['file_name'],
@@ -1025,7 +1111,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 																'inline'		=> $attach_value['inline'],
 																'created_at'	=> $attach_value['created_at'],
 																'updated_at'	=> $attach_value['updated_at'] ),
-														array( '%s', '%s', '%s' ) );	
+														array( '%s', '%s', '%s' ) );
 													$added_attach++;
 												}
 											} elseif ( strtotime( $attachment['updated_at'] ) < strtotime( $attach_value['updated_at'] ) ) {
@@ -1043,23 +1129,24 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 																'size'			=> $attach_value['size'],
 																'inline'		=> $attach_value['inline'],
 																'created_at'	=> $attach_value['created_at'],
-																'updated_at'	=> $attach_value['updated_at'] ), 
+																'updated_at'	=> $attach_value['updated_at'] ),
 														array( 'id' => $attach_value['id'] ),
-														array(  '%s', '%s' ) ); 
+														array(  '%s', '%s' ) );
 													$updated_attach++;
 												}
-											}				
-										}																				
+											}
+										}
 
-										if ( empty( $array_resp_comments['next_page'] ) )
+										if ( empty( $array_resp_comments['next_page'] ) ) {
 											break;
+										}
 									}
 									$k++;
 								}
 							}
 
 							if ( ! empty( $all_attachments ) ) {
-								foreach ( $all_attachments as $key_attach => $value_attach ) {						
+								foreach ( $all_attachments as $key_attach => $value_attach ) {
 									$result = zndskhc_attachments_backup( 'deleted', $value_attach['id'] . '-' . $value_attach['file_name'] );
 									if ( $result != true ) {
 										$attachments_backup_error_current = true;
@@ -1073,17 +1160,18 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 
 							if ( ! $attachments_backup_error_current ) {
 								$wpdb->update( $wpdb->prefix . "zndskhc_articles",
-										array( 'updated_at'		=> $value['updated_at'] ), 
+										array( 'updated_at'		=> $value['updated_at'] ),
 										array( 'id' => $value['id'] ),
 										array( '%s' ) );
-							}	
+							}
 						}
-					}			
+					}
 
-					if ( empty( $array_resp['next_page'] ) )
+					if ( empty( $array_resp['next_page'] ) ) {
 						break;
+					}
 				}
-				$i++;	
+				$i++;
 			}
 
 			if ( ! empty( $all_articles ) ) {
@@ -1096,55 +1184,66 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 
 			if ( $added != 0 || $updated != 0 || $deleted != 0 ) {
 				$log = __( 'Articles backup', 'zendesk-help-center' ) . ':';
-				if ( $added != 0 )
+				if ( $added != 0 ) {
 					$log .= ' ' . $added . ' ' . __( 'added', 'zendesk-help-center' ) . ';';
-				if ( $updated != 0 )
+				}
+				if ( $updated != 0 ) {
 					$log .= ' ' . $updated . ' ' . __( 'updated', 'zendesk-help-center' ) . ';';
-				if ( $deleted != 0 )
+				}
+				if ( $deleted != 0 ) {
 					$log .= ' ' . $deleted . ' ' . __( 'deleted', 'zendesk-help-center' ) . ';';
+				}
 				zndskhc_log( $log );
 			}
 			if ( $added_comment != 0 || $updated_comment != 0 || $deleted_comment != 0 ) {
 				$log = __( 'Comments backup', 'zendesk-help-center' ) . ':';
-				if ( $added_comment != 0 )
+				if ( $added_comment != 0 ) {
 					$log .= ' ' . $added_comment . ' ' . __( 'added', 'zendesk-help-center' ) . ';';
-				if ( $updated_comment != 0 )
+				}
+				if ( $updated_comment != 0 ) {
 					$log .= ' ' . $updated_comment . ' ' . __( 'updated', 'zendesk-help-center' ) . ';';
-				if ( $deleted_comment != 0 )
+				}
+				if ( $deleted_comment != 0 ) {
 					$log .= ' ' . $deleted_comment . ' ' . __( 'deleted', 'zendesk-help-center' ) . ';';
+				}
 				zndskhc_log( $log );
 			}
 			if ( ! empty( $attachments_backup_error ) ) {
 				$upload_dir = wp_upload_dir();
 				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Attachments backup', 'zendesk-help-center' ) . ' ( ' . $upload_dir['basedir'] . '/zendesk_hc_attachments/' . ' ) - ' . $attachments_backup_error;
 				zndskhc_log( $log );
-				if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+				if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 					zndskhc_send_mail( $log );
+				}
 			}
 			if ( $added_attach != 0 || $updated_attach != 0 || $deleted_attach != 0 ) {
 				$log = __( 'Attachments backup', 'zendesk-help-center' ) . ':';
-				if ( $added_attach != 0 )
+				if ( $added_attach != 0 ) {
 					$log .= ' ' . $added_attach . ' ' . __( 'added', 'zendesk-help-center' ) . ';';
-				if ( $updated_attach != 0 )
+				}
+				if ( $updated_attach != 0 ) {
 					$log .= ' ' . $updated_attach . ' ' . __( 'updated', 'zendesk-help-center' ) . ';';
-				if ( $deleted_attach != 0 )
+				}
+				if ( $deleted_attach != 0 ) {
 					$log .= ' ' . $deleted_attach . ' ' . __( 'deleted', 'zendesk-help-center' ) . ';';
+				}
 				zndskhc_log( $log );
 			}
-		}		
+		}
 
 		/* get labels */
-		if ( 1 == $zndskhc_options['backup_elements']['labels'] ) {
+		if ( ! empty( $zndskhc_options['backup_elements']['labels'] ) ) {
 			$all_labels = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_labels`", ARRAY_A );
 			$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/articles/labels.json';
-			$array_resp = zndskhc_curl( $url );			
+			$array_resp = zndskhc_curl( $url );
 			if ( !is_array( $array_resp ) && empty( $array_resp ) ) {
 				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 				zndskhc_log( $log );
-				if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+				if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 					zndskhc_send_mail( $log );
+				}
 				return $log;
-			} 
+			}
 
 			if ( isset( $array_resp['error'] ) ) {
 				if ( 'RecordNotFound' == $array_resp['error'] ) {
@@ -1154,8 +1253,9 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 				} else {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' . $array_resp['error'] . ' (' . $array_resp['description'] . ')';
 					zndskhc_log( $log );
-					if ( $auto_mode && 1 == $zndskhc_options['emailing_fail_backup'] )
+					if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
 						zndskhc_send_mail( $log );
+					}
 					return $log;
 				}
 			} else {
@@ -1169,22 +1269,22 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 							break;
 						}
 					}
-					
+
 					if ( empty( $label ) ) {
-						$wpdb->insert( $wpdb->prefix . "zndskhc_labels", 
-							array( 'id' 			=> $value['id'], 
+						$wpdb->insert( $wpdb->prefix . "zndskhc_labels",
+							array( 'id' 			=> $value['id'],
 									'name'			=> $value['name'],
 									'updated_at'	=> $value['updated_at'] ),
-							array( '%s', '%s', '%s' ) );	
+							array( '%s', '%s', '%s' ) );
 						$added++;
 					} elseif ( strtotime( $label['updated_at'] ) < strtotime( $value['updated_at'] ) ) {
 						$wpdb->update( $wpdb->prefix . "zndskhc_labels",
 							array( 'updated_at'	=> $value['updated_at'],
-									'name'			=> $value['name'] ), 
+									'name'			=> $value['name'] ),
 							array( 'id' => $value['id'] ),
-							array(  '%s', '%s' ) ); 
+							array(  '%s', '%s' ) );
 						$updated++;
-					}				
+					}
 				}
 				if ( ! empty( $all_labels ) ) {
 					foreach ( $all_labels as $key_label => $value_label ) {
@@ -1194,12 +1294,15 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 				}
 				if ( $added != 0 || $updated != 0 || $deleted != 0 ) {
 					$log = __( 'Labels backup', 'zendesk-help-center' ) . ':';
-					if ( $added != 0 )
+					if ( $added != 0 ) {
 						$log .= ' ' . $added . ' ' . __( 'added', 'zendesk-help-center' ) . ';';
-					if ( $updated != 0 )
+					}
+					if ( $updated != 0 ) {
 						$log .= ' ' . $updated . ' ' . __( 'updated', 'zendesk-help-center' ) . ';';
-					if ( $deleted != 0 )
+					}
+					if ( $deleted != 0 ) {
 						$log .= ' ' . $deleted . ' ' . __( 'deleted', 'zendesk-help-center' ) . ';';
+					}
 					zndskhc_log( $log );
 				}
 			}
@@ -1217,21 +1320,25 @@ if ( ! function_exists( 'zndskhc_attachments_backup' ) ) {
 		$upload_dir = wp_upload_dir();
 		if ( ! $upload_dir["error"] ) {
 			$cstm_folder = $upload_dir['basedir'] . '/zendesk_hc_attachments';
-			if ( ! is_dir( $cstm_folder ) )
+			if ( ! is_dir( $cstm_folder ) ) {
 				wp_mkdir_p( $cstm_folder, 0755 );
+			}
 		}
 		$uploadfile = $cstm_folder . '/' . $filename;
 
 		if ( 'deleted' == $status ) {
-			if ( ! file_exists( $uploadfile ) )
+			if ( ! file_exists( $uploadfile ) ) {
 				return true;
-			if ( unlink( $uploadfile ) )
+			}
+			if ( unlink( $uploadfile ) ) {
 				return true;
+			}
 		} else if ( 'added' == $status || 'updated' == $status ) {
 			if ( $file_get_contents = file_get_contents( $content_url ) ) {
-				if ( file_put_contents( $uploadfile, $file_get_contents ) )
+				if ( file_put_contents( $uploadfile, $file_get_contents ) ) {
 					return true;
-			}						
+				}
+			}
 		}
 		return false;
 	}
@@ -1240,9 +1347,9 @@ if ( ! function_exists( 'zndskhc_attachments_backup' ) ) {
 /* Add log to the file */
 if ( ! function_exists( 'zndskhc_log' ) ) {
 	function zndskhc_log( $log ) {
-		$log = date( 'd.m.Y h:i:s' ) . '	' . $log . "\n"; 
+		$log = date( 'd.m.Y h:i:s' ) . '	' . $log . "\n";
 		@error_log( $log, 3, dirname( __FILE__ )  . "/backup.log" );
-		@chmod( dirname( __FILE__ )  . "/backup.log", 0755 );	
+		@chmod( dirname( __FILE__ )  . "/backup.log", 0755 );
 	}
 }
 
@@ -1259,17 +1366,21 @@ if ( ! function_exists( 'zndskhc_get_logs' ) ) {
 				foreach ( $content_reverse as $key => $value ) {
 					if ( $i < 12 ) {
 						echo '<div';
-						if ( false != strpos( $value, __( 'ERROR', 'zendesk-help-center' ) ) )
+						if ( false != strpos( $value, __( 'ERROR', 'zendesk-help-center' ) ) ) {
 							echo ' class="zndskhc_error_log"';
-						if ( false != strpos( $value, __( 'WARNING', 'zendesk-help-center' ) ) )
+						}
+						if ( false != strpos( $value, __( 'WARNING', 'zendesk-help-center' ) ) ) {
 							echo ' class="zndskhc_warning_log"';
+						}
 						echo '>' . $value . '</div>';
 						$i++;
-					} else
+					} else {
 						break;
+					}
 				}
-			} else
+			} else {
 				echo $content;
+			}
 		}
 	}
 }
@@ -1278,8 +1389,9 @@ if ( ! function_exists( 'zndskhc_get_logs' ) ) {
 if ( ! function_exists( 'zndskhc_send_mail' ) ) {
 	function zndskhc_send_mail( $message ) {
 		global $zndskhc_options;
-		if ( empty( $zndskhc_options ) )
+		if ( empty( $zndskhc_options ) ) {
 			$zndskhc_options = get_option( 'zndskhc_options' );
+		}
 
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
 		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
@@ -1298,12 +1410,13 @@ if ( ! function_exists( 'zndskhc_send_mail' ) ) {
 if ( ! function_exists( 'zndskhc_schedules' ) ) {
 	function zndskhc_schedules( $schedules ) {
 		global $zndskhc_options;
-		if ( empty( $zndskhc_options ) )
+		if ( empty( $zndskhc_options ) ) {
 			$zndskhc_options = get_option( 'zndskhc_options' );
+		}
 		$schedules_hours = ( '' != $zndskhc_options['time'] ) ? $zndskhc_options['time'] : 48;
 
-	    $schedules['schedules_hours'] = array( 'interval' => $schedules_hours*60*60, 'display' => 'Every ' . $schedules_hours . ' hours' );
-	    return $schedules;
+		$schedules['schedules_hours'] = array( 'interval' => $schedules_hours*60*60, 'display' => 'Every ' . $schedules_hours . ' hours' );
+		return $schedules;
 	}
 }
 
@@ -1329,8 +1442,9 @@ if ( !function_exists( 'zndskhc_links' ) ) {
 	function zndskhc_links( $links, $file ) {
 		$base = plugin_basename( __FILE__ );
 		if ( $file == $base ) {
-			if ( ! is_network_admin() )
+			if ( ! is_network_admin() ) {
 				$links[]	=	'<a href="admin.php?page=zendesk_hc.php&action=settings">' . __( 'Settings', 'zendesk-help-center' ) . '</a>';
+			}
 			$links[]	=	'<a href="https://support.bestwebsoft.com/hc/en-us/sections/200956739" target="_blank">' . __( 'FAQ', 'zendesk-help-center' ) . '</a>';
 			$links[]	=	'<a href="https://support.bestwebsoft.com">' . __( 'Support', 'zendesk-help-center' ) . '</a>';
 		}
@@ -1354,14 +1468,16 @@ if ( ! function_exists ( 'zndskhc_admin_notices' ) ) {
 	function zndskhc_admin_notices() {
 		global $hook_suffix, $zndskhc_plugin_info, $zndskhc_options;
 		if ( 'plugins.php' == $hook_suffix && ! is_network_admin() ) {
-			if ( empty( $zndskhc_options ) )
+			if ( empty( $zndskhc_options ) ) {
 				register_zndskhc_settings();
+			}
 
 			bws_plugin_banner_to_settings( $zndskhc_plugin_info, 'zndskhc_options', 'zendesk-help-center', 'admin.php?page=zendesk_hc.php&action=settings' );
 
-			if ( isset( $zndskhc_options['first_install'] ) && strtotime( '-1 week' ) > $zndskhc_options['first_install'] )
+			if ( isset( $zndskhc_options['first_install'] ) && strtotime( '-1 week' ) > $zndskhc_options['first_install'] ) {
 				bws_plugin_banner( $zndskhc_plugin_info, 'zndskhc', 'zendesk-help-center', '617141936fb69ce9c91a2160da415f24', '208', '//ps.w.org/zendesk-help-center/assets/icon-128x128.png' );
-		}	
+			}
+		}
 
 		if ( isset( $_REQUEST['page'] ) && 'zendesk_hc.php' == $_REQUEST['page'] ) {
 			bws_plugin_suggest_feature_banner( $zndskhc_plugin_info, 'zndskhc_options', 'zendesk-help-center' );
@@ -1388,19 +1504,20 @@ if ( ! function_exists( 'delete_zndskhc_settings' ) ) {
 		delete_option( 'zndskhc_options' );
 		/* delete plugin`s tables */
 		$wpdb->query( "DROP TABLE IF EXISTS
-			`" . $wpdb->prefix . "zndskhc_categories`, 
+			`" . $wpdb->prefix . "zndskhc_categories`,
 			`" . $wpdb->prefix . "zndskhc_sections`,
-			`" . $wpdb->prefix . "zndskhc_articles`, 
-			`" . $wpdb->prefix . "zndskhc_labels`, 
-			`" . $wpdb->prefix . "zndskhc_comments`, 
-			`" . $wpdb->prefix . "zndskhc_attachments`;" 
+			`" . $wpdb->prefix . "zndskhc_articles`,
+			`" . $wpdb->prefix . "zndskhc_labels`,
+			`" . $wpdb->prefix . "zndskhc_comments`,
+			`" . $wpdb->prefix . "zndskhc_attachments`;"
 		);
 		/* delete plugin`s upload_dir */
 		$upload_dir = wp_upload_dir();
 		if ( ! $upload_dir["error"] ) {
 			$cstm_folder = $upload_dir['basedir'] . '/zendesk_hc_attachments';
-			if ( is_dir( $cstm_folder ) )
+			if ( is_dir( $cstm_folder ) ) {
 				rmdir( $cstm_folder );
+			}
 		}
 		/* Delete hook if it exist */
 		wp_clear_scheduled_hook( 'auto_synchronize_zendesk_hc' );
@@ -1411,8 +1528,9 @@ if ( ! function_exists( 'zndskhc_plugin_uninstall' ) ) {
 	function zndskhc_plugin_uninstall() {
 		global $wpdb;
 
-		if ( ! function_exists( 'get_plugins' ) )
+		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		}
 
 		$all_plugins = get_plugins();
 		if ( ! array_key_exists( 'zendesk-help-center-pro/zendesk-help-center-pro.php', $all_plugins ) ) {

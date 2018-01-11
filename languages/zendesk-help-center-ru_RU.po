@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zendesk_hc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-11 10:41+0300\n"
-"PO-Revision-Date: 2016-04-11 10:41+0300\n"
+"POT-Creation-Date: 2017-12-26 13:00+0200\n"
+"PO-Revision-Date: 2017-12-26 13:04+0200\n"
 "Last-Translator: bestwebsoft.com <plugins@bestwebsoft.com>\n"
 "Language-Team: BestWebSoft Team <wp@bestwebsoft.com>\n"
 "Language: ru_RU\n"
@@ -15,83 +15,83 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n%10==1 && n%100!=11) ? 3 : "
 "((n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20)) ? 1 : 2);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../zendesk-help-center.php:34 ../zendesk-help-center.php:347
+#: ../zendesk-help-center.php:34 ../zendesk-help-center.php:390
 msgid "Zendesk HC Settings"
 msgstr "Настройки Zendesk HC"
 
-#: ../zendesk-help-center.php:246
+#: ../zendesk-help-center.php:283
 msgid "Categories"
 msgstr "Категории"
 
-#: ../zendesk-help-center.php:247
+#: ../zendesk-help-center.php:284
 msgid "Sections"
 msgstr "Секции"
 
-#: ../zendesk-help-center.php:248
+#: ../zendesk-help-center.php:285
 msgid "Articles"
 msgstr "Статьи"
 
-#: ../zendesk-help-center.php:249
+#: ../zendesk-help-center.php:286
 msgid "Articles Comments"
 msgstr "Комментарии статей"
 
-#: ../zendesk-help-center.php:250
+#: ../zendesk-help-center.php:287
 msgid "Articles Labels"
 msgstr "Ярлыки статей"
 
-#: ../zendesk-help-center.php:251
+#: ../zendesk-help-center.php:288
 msgid "Articles Attachments"
 msgstr "Прикрепленные файлы статей"
 
-#: ../zendesk-help-center.php:260
+#: ../zendesk-help-center.php:297
 msgid "Error creating log file"
-msgstr "Ошибка создания файла лога"
+msgstr "Ошибка создания файла журнала"
 
-#: ../zendesk-help-center.php:278
-msgid "Data is updated successfully"
+#: ../zendesk-help-center.php:316
+msgid "Data is successfully updated"
 msgstr "Данные успешно обновлены"
 
-#: ../zendesk-help-center.php:286
-msgid "The log file is cleared."
-msgstr "Файл лога очищен."
-
-#: ../zendesk-help-center.php:289
-msgid "Couldn't clear log file"
-msgstr "Не удалось очистить файл лога"
-
 #: ../zendesk-help-center.php:325
+msgid "The log file is cleared."
+msgstr "Файл журнала очищен."
+
+#: ../zendesk-help-center.php:328
+msgid "Couldn't clear log file"
+msgstr "Не удалось очистить файл журнала"
+
+#: ../zendesk-help-center.php:367
 msgid "Settings saved"
 msgstr "Настройки сохранены"
 
-#: ../zendesk-help-center.php:344
+#: ../zendesk-help-center.php:387
 msgid "All plugin settings were restored."
 msgstr "Все настройки плагина восстановлены."
 
-#: ../zendesk-help-center.php:349 ../zendesk-help-center.php:460
+#: ../zendesk-help-center.php:392 ../zendesk-help-center.php:503
 msgid "Backup"
-msgstr "Бекап"
+msgstr "Резервное копирование"
 
-#: ../zendesk-help-center.php:350 ../zendesk-help-center.php:1327
-#: ../zendesk-help-center.php:1341
+#: ../zendesk-help-center.php:393 ../zendesk-help-center.php:1418
+#: ../zendesk-help-center.php:1432
 msgid "Settings"
 msgstr "Настройки"
 
-#: ../zendesk-help-center.php:351
+#: ../zendesk-help-center.php:394
 msgid "Go PRO"
 msgstr "Перейти на PRO версию"
 
-#: ../zendesk-help-center.php:363
+#: ../zendesk-help-center.php:406
 msgid "Last synchronization with Zendesk HC was on"
 msgstr "Последняя синхронизация с Zendesk HC была"
 
-#: ../zendesk-help-center.php:375
+#: ../zendesk-help-center.php:419
 msgid "Export backup"
-msgstr "Экспорт бекапа"
+msgstr "Экспорт резервного копирования"
 
-#: ../zendesk-help-center.php:385
+#: ../zendesk-help-center.php:429
 msgid ""
 "There is no ZIP library on your server. You can download attachments "
 "manually from folder"
@@ -99,211 +99,229 @@ msgstr ""
 "На вашем сервере нет ZIP библиотеки. Вы можете загрузить прикрепленные файлы "
 "вручную из каталога"
 
-#: ../zendesk-help-center.php:389
+#: ../zendesk-help-center.php:433
 msgid "Export"
 msgstr "Экспорт"
 
-#: ../zendesk-help-center.php:403
+#: ../zendesk-help-center.php:447
 msgid "Synchronize now"
 msgstr "Синхронизировать сейчас"
 
-#: ../zendesk-help-center.php:416
+#: ../zendesk-help-center.php:460
 msgid "Log file size"
-msgstr "Размер файла лога"
+msgstr "Размер файла журнала"
 
-#: ../zendesk-help-center.php:419
+#: ../zendesk-help-center.php:463
 msgid "Kbyte"
 msgstr "Кбайт"
 
-#: ../zendesk-help-center.php:421
+#: ../zendesk-help-center.php:465
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../zendesk-help-center.php:434
+#: ../zendesk-help-center.php:478
 msgid "Zendesk Information"
 msgstr "Zendesk информация"
 
-#: ../zendesk-help-center.php:437
+#: ../zendesk-help-center.php:481
 msgid "subdomain"
-msgstr "субдомен"
+msgstr "поддомен"
 
-#: ../zendesk-help-center.php:441
+#: ../zendesk-help-center.php:483
 #, php-format
 msgid "Example: your URL is %s, and it is necessary to enter %s part only."
 msgstr "Пример: если ваш URL %s, то нужно ввести только часть %s."
 
-#: ../zendesk-help-center.php:448
-msgid "user"
-msgstr "пользователь"
+#: ../zendesk-help-center.php:488
+msgid "email"
+msgstr "email"
 
-#: ../zendesk-help-center.php:449
+#: ../zendesk-help-center.php:489
 msgid "password"
 msgstr "пароль"
 
-#: ../zendesk-help-center.php:453
+#: ../zendesk-help-center.php:490
+msgid "token"
+msgstr "токен"
+
+#: ../zendesk-help-center.php:491
+msgid "Don't know how to generate API token? "
+msgstr "Не знаешь как сгенерировать API токен? "
+
+#: ../zendesk-help-center.php:491
+msgid "Read the instruction"
+msgstr "Читай инструкцию"
+
+#: ../zendesk-help-center.php:496
 msgid "Synchronize Zendesk HC every"
 msgstr "Синхронизировать Zendesk HC каждый"
 
-#: ../zendesk-help-center.php:455
+#: ../zendesk-help-center.php:498
 msgid "hours"
 msgstr "часов"
 
-#: ../zendesk-help-center.php:456
+#: ../zendesk-help-center.php:499
 msgid "Set 0 to disable auto backup."
-msgstr "Установите значение 0, чтобы отключить автоматический бекап."
+msgstr ""
+"Установите значение 0, чтобы отключить автоматическое резервное копирование."
 
-#: ../zendesk-help-center.php:468
+#: ../zendesk-help-center.php:511
 msgid "Send email in case of backup failure"
-msgstr "Отправить емейл в случае сбоя резервного копирования"
+msgstr "Отправить уведомление в случае сбоя резервного копирования"
 
-#: ../zendesk-help-center.php:478
+#: ../zendesk-help-center.php:521
 msgid "Close"
 msgstr "Закрыть"
 
-#: ../zendesk-help-center.php:482
+#: ../zendesk-help-center.php:525
 msgid "Display help widget on the site"
 msgstr "Отображение виджета помощи на сайте"
 
-#: ../zendesk-help-center.php:488
+#: ../zendesk-help-center.php:531
 msgid "Contact link in help widget"
 msgstr "Ссылка на обратную связь в виджете"
 
-#: ../zendesk-help-center.php:494
+#: ../zendesk-help-center.php:537
 msgid "Button title in help widget"
 msgstr "Название кнопки в виджете"
 
-#: ../zendesk-help-center.php:503
-msgid "Unlock premium options by upgrading to Pro version"
-msgstr "Активируйте премиум опции обновившись до Pro версии"
-
-#: ../zendesk-help-center.php:505
+#: ../zendesk-help-center.php:545
 msgid "Learn More"
 msgstr "Подробнее"
 
-#: ../zendesk-help-center.php:512
+#: ../zendesk-help-center.php:552
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
-#: ../zendesk-help-center.php:534
+#: ../zendesk-help-center.php:574
 msgid "Please, choose at least one element."
 msgstr "Пожалуйста, выберите хотя бы один элемент."
 
-#: ../zendesk-help-center.php:594
+#: ../zendesk-help-center.php:634
 msgid "Error creating zip archive."
 msgstr "Ошибка создания zip-архива."
 
-#: ../zendesk-help-center.php:633 ../zendesk-help-center.php:636
-#: ../zendesk-help-center.php:643 ../zendesk-help-center.php:662
-#: ../zendesk-help-center.php:675 ../zendesk-help-center.php:754
-#: ../zendesk-help-center.php:767 ../zendesk-help-center.php:851
-#: ../zendesk-help-center.php:859 ../zendesk-help-center.php:928
-#: ../zendesk-help-center.php:936 ../zendesk-help-center.php:995
-#: ../zendesk-help-center.php:1003 ../zendesk-help-center.php:1127
-#: ../zendesk-help-center.php:1150 ../zendesk-help-center.php:1163
-#: ../zendesk-help-center.php:1270
+#: ../zendesk-help-center.php:678 ../zendesk-help-center.php:681
+#: ../zendesk-help-center.php:688 ../zendesk-help-center.php:707
+#: ../zendesk-help-center.php:721 ../zendesk-help-center.php:804
+#: ../zendesk-help-center.php:818 ../zendesk-help-center.php:907
+#: ../zendesk-help-center.php:916 ../zendesk-help-center.php:988
+#: ../zendesk-help-center.php:997 ../zendesk-help-center.php:1057
+#: ../zendesk-help-center.php:1066 ../zendesk-help-center.php:1199
+#: ../zendesk-help-center.php:1226 ../zendesk-help-center.php:1240
+#: ../zendesk-help-center.php:1355
 msgid "ERROR"
 msgstr "ОШИБКА"
 
-#: ../zendesk-help-center.php:633 ../zendesk-help-center.php:636
+#: ../zendesk-help-center.php:678 ../zendesk-help-center.php:681
 msgid "Backup failed as some plugin settings are empty. To fix it go to"
 msgstr ""
-"Сбой бекапа, т.к. некоторые настройки плагина пусты. Чтобы исправить это "
-"перейдите на"
+"Сбой резервного копирования, т.к. некоторые настройки плагина пусты. Чтобы "
+"исправить это перейдите на"
 
-#: ../zendesk-help-center.php:633 ../zendesk-help-center.php:636
+#: ../zendesk-help-center.php:678 ../zendesk-help-center.php:681
 msgid "settings page"
 msgstr "страницу настроек"
 
-#: ../zendesk-help-center.php:643
+#: ../zendesk-help-center.php:688
 msgid "Backup failed as this hosting does not support СURL."
-msgstr "Сбой создания бэкапа, т.к. данный хостинг не поддерживает СURL."
+msgstr "Сбой резервного копирования, т.к. данный хостинг не поддерживает СURL."
 
-#: ../zendesk-help-center.php:662 ../zendesk-help-center.php:671
-#: ../zendesk-help-center.php:675 ../zendesk-help-center.php:733
+#: ../zendesk-help-center.php:707 ../zendesk-help-center.php:717
+#: ../zendesk-help-center.php:721 ../zendesk-help-center.php:780
 msgid "Categories backup"
-msgstr "Бекап категорий"
+msgstr "Резервное копирование категорий"
 
-#: ../zendesk-help-center.php:662 ../zendesk-help-center.php:754
-#: ../zendesk-help-center.php:851 ../zendesk-help-center.php:928
-#: ../zendesk-help-center.php:995 ../zendesk-help-center.php:1150
+#: ../zendesk-help-center.php:707 ../zendesk-help-center.php:804
+#: ../zendesk-help-center.php:907 ../zendesk-help-center.php:988
+#: ../zendesk-help-center.php:1057 ../zendesk-help-center.php:1226
 msgid "Undefined error has occurred while getting data from Zendesk API."
 msgstr "Неизвестная ошибка возникла при получении данных из Zendesk API."
 
-#: ../zendesk-help-center.php:671 ../zendesk-help-center.php:763
-#: ../zendesk-help-center.php:1159 ../zendesk-help-center.php:1272
+#: ../zendesk-help-center.php:717 ../zendesk-help-center.php:814
+#: ../zendesk-help-center.php:1236 ../zendesk-help-center.php:1358
 msgid "WARNING"
 msgstr "ПРЕДУПРЕЖДЕНИЕ"
 
-#: ../zendesk-help-center.php:735 ../zendesk-help-center.php:828
-#: ../zendesk-help-center.php:1108 ../zendesk-help-center.php:1118
-#: ../zendesk-help-center.php:1135 ../zendesk-help-center.php:1206
+#: ../zendesk-help-center.php:782 ../zendesk-help-center.php:881
+#: ../zendesk-help-center.php:1174 ../zendesk-help-center.php:1187
+#: ../zendesk-help-center.php:1208 ../zendesk-help-center.php:1284
 msgid "added"
 msgstr "добавлено"
 
-#: ../zendesk-help-center.php:737 ../zendesk-help-center.php:830
-#: ../zendesk-help-center.php:1110 ../zendesk-help-center.php:1120
-#: ../zendesk-help-center.php:1137 ../zendesk-help-center.php:1208
+#: ../zendesk-help-center.php:785 ../zendesk-help-center.php:884
+#: ../zendesk-help-center.php:1177 ../zendesk-help-center.php:1190
+#: ../zendesk-help-center.php:1211 ../zendesk-help-center.php:1287
 msgid "updated"
 msgstr "обновлено"
 
-#: ../zendesk-help-center.php:739 ../zendesk-help-center.php:832
-#: ../zendesk-help-center.php:1112 ../zendesk-help-center.php:1122
-#: ../zendesk-help-center.php:1139 ../zendesk-help-center.php:1210
+#: ../zendesk-help-center.php:788 ../zendesk-help-center.php:887
+#: ../zendesk-help-center.php:1180 ../zendesk-help-center.php:1193
+#: ../zendesk-help-center.php:1214 ../zendesk-help-center.php:1290
 msgid "deleted"
 msgstr "удалено"
 
-#: ../zendesk-help-center.php:754 ../zendesk-help-center.php:763
-#: ../zendesk-help-center.php:767 ../zendesk-help-center.php:826
+#: ../zendesk-help-center.php:804 ../zendesk-help-center.php:814
+#: ../zendesk-help-center.php:818 ../zendesk-help-center.php:879
 msgid "Sections backup"
-msgstr "Бекап секций"
+msgstr "Резервное копирование секций"
 
-#: ../zendesk-help-center.php:851 ../zendesk-help-center.php:859
-#: ../zendesk-help-center.php:1106
+#: ../zendesk-help-center.php:907 ../zendesk-help-center.php:916
+#: ../zendesk-help-center.php:1172
 msgid "Articles backup"
-msgstr "Бекап статей"
+msgstr "Резервное копирование статей"
 
-#: ../zendesk-help-center.php:928 ../zendesk-help-center.php:936
-#: ../zendesk-help-center.php:1116
+#: ../zendesk-help-center.php:988 ../zendesk-help-center.php:997
+#: ../zendesk-help-center.php:1185
 msgid "Comments backup"
-msgstr "Бекап комментариев"
+msgstr "Резервное копирование комментариев"
 
-#: ../zendesk-help-center.php:995 ../zendesk-help-center.php:1003
-#: ../zendesk-help-center.php:1127 ../zendesk-help-center.php:1133
+#: ../zendesk-help-center.php:1057 ../zendesk-help-center.php:1066
+#: ../zendesk-help-center.php:1199 ../zendesk-help-center.php:1206
 msgid "Attachments backup"
-msgstr "Бекап прикрепленных файлов"
+msgstr "Резервное копирование прикрепленных файлов"
 
-#: ../zendesk-help-center.php:1023
+#: ../zendesk-help-center.php:1087
 msgid "Error adding file"
 msgstr "Ошибка добавления файла"
 
-#: ../zendesk-help-center.php:1043
+#: ../zendesk-help-center.php:1107
 msgid "Error updating file"
 msgstr "Ошибка обновления файла"
 
-#: ../zendesk-help-center.php:1074
+#: ../zendesk-help-center.php:1139
 msgid "Error deleting file"
 msgstr "Ошибка удаления файла"
 
-#: ../zendesk-help-center.php:1150 ../zendesk-help-center.php:1159
-#: ../zendesk-help-center.php:1163 ../zendesk-help-center.php:1204
+#: ../zendesk-help-center.php:1226 ../zendesk-help-center.php:1236
+#: ../zendesk-help-center.php:1240 ../zendesk-help-center.php:1282
 msgid "Labels backup"
-msgstr "Бекап ярлыков"
+msgstr "Резервное копирование ярлыков"
 
-#: ../zendesk-help-center.php:1262
+#: ../zendesk-help-center.php:1347
 msgid "Last log entries"
-msgstr "Последние записи лога"
+msgstr "Последние записи журнала"
 
-#: ../zendesk-help-center.php:1300
+#: ../zendesk-help-center.php:1390
 msgid "Zendesk HC backup error on"
-msgstr "Zendesk HC ошибка создания бэкапа на"
+msgstr "Zendesk HC ошибка резервного копирования на"
 
-#: ../zendesk-help-center.php:1342
+#: ../zendesk-help-center.php:1434
 msgid "FAQ"
 msgstr "FAQ"
 
-#: ../zendesk-help-center.php:1343
+#: ../zendesk-help-center.php:1435
 msgid "Support"
 msgstr "Тех. поддержка"
+
+#~ msgid "Data is updated successfully"
+#~ msgstr "Данные успешно обновлены"
+
+#~ msgid "user"
+#~ msgstr "пользователь"
+
+#~ msgid "Unlock premium options by upgrading to Pro version"
+#~ msgstr "Активируйте премиум опции обновившись до Pro версии"
 
 #~ msgid "Notice:"
 #~ msgstr "Внимание:"

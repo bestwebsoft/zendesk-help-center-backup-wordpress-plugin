@@ -22,7 +22,7 @@
 <li>Log backups</li>
 <li>Email notifications in case of backup failure</li>
 <li>Set the time period for Zendesk Help Center synchronization</li>
-<li>Compatible with latest WordPress version </li>
+<li>Compatible with latest WordPress version</li>
 <li>Incredibly simple settings for fast setup without modifying code</li>
 <li>Detailed step-by-step documentation and videos</li>
 </ul>
@@ -30,7 +30,7 @@
 <p><strong>Pro Features</strong></p>
 <p>All features from Free version included plus:</p>
 <ul>
-<li>Add and configure enhanced Zendesk Help Center widget </li>
+<li>Add and configure enhanced Zendesk Help Center widget</li>
 <li>Track widget activity stats</li>
 <li>View articles data via admin dashboard</li>
 <li>Get answer to your support question within one business day (<a href="https://bestwebsoft.com/support-policy/" rel="nofollow">Support Policy</a>)</li>
@@ -45,7 +45,7 @@
 <li><a href="http://www.youtube.com/watch?v=0QatAvYLxMM" rel="nofollow">[Video] Installation Instruction</a></li>
 </ul>
 <h4>Help &amp; Support</h4>
-<p>Visit our Help Center if you have any questions, our friendly Support Team is happy to help — <a href="https://support.bestwebsoft.com/" rel="nofollow">https://support.bestwebsoft.com/</a></p>
+<p>Visit our Help Center if you have any questions, our friendly Support Team is happy to help &#8211; <a href="https://support.bestwebsoft.com/" rel="nofollow">https://support.bestwebsoft.com/</a></p>
 <h4>Translation</h4>
 <ul>
 <li>Russian (ru_RU)</li>
