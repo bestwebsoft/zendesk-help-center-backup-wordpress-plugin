@@ -6,7 +6,7 @@ Description: Backup and export Zendesk Help Center content automatically to your
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.8
+Version: 1.0.9
 Author URI: https://bestwebsoft.com/
 License: GPLv3 or later
 */
