@@ -1,10 +1,10 @@
-=== Zendesk Help Center by BestWebSoft ===
+=== Help Center by BestWebSoft ===
 Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: backup, backup data, database, zendesk, zendesk plugin, zendesk help center, zendesk help center backup, zendesk backup log, zendesk data to database, backup time, help center, save zendesk center data
-Requires at least: 4.0
-Tested up to: 5.2.2
-Stable tag: 1.0.9
+Requires at least: 4.5
+Tested up to: 5.3.2
+Stable tag: 1.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -16,7 +16,7 @@ This plugin is a simple solution to backup and export your Zendesk Help Center d
 
 Install now and never lose your Zendesk Help Center articles!
 
-> **NOTE:** Zendesk HC plugin requires Help Center system to be activated in your Zendesk account and doesn’t work with an old system.
+> **NOTE:** Help Center plugin requires Help Center system to be activated in your Zendesk account and doesn’t work with an old system.
 
 http://www.youtube.com/watch?v=7YT3dlsx0iQ
 
@@ -74,9 +74,9 @@ Some of these translations are not complete. We are constantly adding new featur
 
 1. Upload `zendesk-help-center` folder to `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Plugin settings are located in 'BWS Panel', 'Zendesk HC'.
+3. Plugin settings are located in 'Help Center'.
 
-[View a Step-by-step Instruction on Zendesk HC Installation](https://docs.google.com/document/d/1-hvn6WRvWnOqj5v5pLUk7Awyu87lq5B_dO-Tv-MC9JQ/)
+[View a Step-by-step Instruction on Help Center Installation](https://docs.google.com/document/d/1-hvn6WRvWnOqj5v5pLUk7Awyu87lq5B_dO-Tv-MC9JQ/)
 
 https://www.youtube.com/watch?v=0QatAvYLxMM
 
@@ -101,9 +101,9 @@ Yes, Article Attachments are located in WordPress Downloads folder in "zendesk_h
 
 No, solely the current (pending) backup version is kept. For instance, if some elements were deleted from your Zendesk Help Center, when synchronizing (creating a backup) this data will also be removed.
 
-= Does the plugin display the data from Zendesk HC? =
+= Does the plugin display the data from Help Center? =
 
-No, the plugin merely creates a backup of your data from Zendesk HC you specified to the database.
+No, the plugin merely creates a backup of your data from Zendesk Help Center you specified to the database.
 
 = I have some problems with the plugin's work. What Information should I provide to receive proper support? =
 
@@ -120,6 +120,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 2. Plugin settings page.
 
 == Changelog ==
+
+= V1.1.0 - 13.01.2020 =
+* Update : Plugin was renamed.
+* Bugfix : Vulnerabilities and security issues were fixed.
 
 = V1.0.9 - 04.09.2019 =
 * Update: The deactivation feedback has been changed. Misleading buttons have been removed.
@@ -176,6 +180,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.1.0 =
+* Bugs fixed.
 
 = V1.0.9 =
 * Usability improved.

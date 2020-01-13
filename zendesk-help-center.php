@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: Zendesk Help Center by BestWebSoft
+Plugin Name: Help Center by BestWebSoft
 Plugin URI: https://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/
 Description: Backup and export Zendesk Help Center content automatically to your WordPress website database.
 Author: BestWebSoft
 Text Domain: zendesk-help-center
 Domain Path: /languages
-Version: 1.0.9
+Version: 1.1.0
 Author URI: https://bestwebsoft.com/
 License: GPLv3 or later
 */
 
-/*  © Copyright 2019  BestWebSoft  ( https://support.bestwebsoft.com )
+/*  © Copyright 2020  BestWebSoft  ( https://support.bestwebsoft.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -30,11 +30,23 @@ License: GPLv3 or later
 /* Function are using to add on admin-panel Wordpress page 'bws_panel' and sub-page of this plugin */
 if ( ! function_exists( 'add_zndskhc_admin_menu' ) ) {
 	function add_zndskhc_admin_menu() {
-		bws_general_menu();
-		if ( ! is_plugin_active( 'zendesk-help-center-pro/zendesk-help-center-pro.php' ) ) {
-			$settings = add_submenu_page( 'bws_panel', __( 'Zendesk HC Settings', 'zendesk-help-center' ), 'Zendesk HC', 'manage_options', "zendesk_hc.php", 'zndskhc_settings_page' );
-			add_action( 'load-' . $settings, 'zndskhc_add_tabs' );
+		global $submenu, $zndskhc_plugin_info, $wp_version;
+
+		$backup_page = add_menu_page( 'Help Center', 'Help Center', 'manage_options', "zendesk_hc_backup.php", 'zndskhc_backup_page', 'none' );
+
+		$settings = add_submenu_page( "zendesk_hc_backup.php", __( 'Help Center Settings', 'zendesk-help-center' ), 'Settings', 'manage_options', "zendesk_hc.php", 'zndskhc_settings_page' );
+
+		add_submenu_page( 'zendesk_hc_backup.php', 'BWS Panel', 'BWS Panel', 'manage_options', 'zndskhc-bws-panel', 'bws_add_menu_render' );
+
+		if ( isset( $submenu['zendesk_hc_backup.php'] ) ) {
+			$submenu['zendesk_hc_backup.php'][] = array(
+				'<span style="color:#d86463"> ' . __( 'Upgrade to Pro', 'zendesk-help-center' ) . '</span>',
+				'manage_options',
+				'https://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=036b375477a35a960f966d052591e9ed&amp;pn=208&amp;v=' . $zndskhc_plugin_info["Version"] . '&wp_v=' . $wp_version );
 		}
+
+		add_action( 'load-' . $backup_page, 'zndskhc_add_tabs' );
+		add_action( 'load-' . $settings, 'zndskhc_add_tabs' );
 	}
 }
 
@@ -60,23 +72,32 @@ if ( ! function_exists ( 'zndskhc_init' ) ) {
 		}
 
 		/* Function check if plugin is compatible with current WP version  */
-		bws_wp_min_version_check( plugin_basename( __FILE__ ), $zndskhc_plugin_info, '4.0' );
+		bws_wp_min_version_check( plugin_basename( __FILE__ ), $zndskhc_plugin_info, '4.5' );
 	}
 }
 
 if ( ! function_exists( 'zndskhc_admin_init' ) ) {
 	function zndskhc_admin_init() {
-		global $bws_plugin_info, $zndskhc_plugin_info;
+		global $pagenow, $bws_plugin_info, $zndskhc_plugin_info, $zndskhc_options;
 
 		if ( empty( $bws_plugin_info ) ) {
 			$bws_plugin_info = array( 'id' => '208', 'version' => $zndskhc_plugin_info["Version"] );
 		}
 
 		/* Call register settings function */
-		if ( isset( $_GET['page'] ) && "zendesk_hc.php" == $_GET['page'] ) {
+		if ( isset( $_GET['page'] ) && ( "zendesk_hc.php" == $_GET['page'] || "zendesk_hc_backup.php" == $_GET['page'] ) ) {
 			register_zndskhc_settings();
 
 			zndskhc_export();
+		}
+
+		if ( 'plugins.php' == $pagenow ) {
+			if ( function_exists( 'bws_plugin_banner_go_pro' ) ) {
+				if ( empty( $zndskhc_options ) )
+					register_zndskhc_settings();
+			
+				bws_plugin_banner_go_pro( $zndskhc_options, $zndskhc_plugin_info, 'zndskhc', 'zendesk-help-center', '617141936fb69ce9c91a2160da415f24', '208', 'zendesk-help-center' );
+			}
 		}
 	}
 }
@@ -84,8 +105,47 @@ if ( ! function_exists( 'zndskhc_admin_init' ) ) {
 /* Function create column in table wp_options for option of this plugin. If this column exists - save value in variable. */
 if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 	function register_zndskhc_settings() {
-		global $zndskhc_options, $zndskhc_plugin_info, $zndskhc_options_default;
+		global $zndskhc_options, $zndskhc_plugin_info;
 		$plugin_db_version = '1.3';
+
+		/* Install the option defaults */
+		if ( ! get_option( 'zndskhc_options' ) ) {
+			$options_defaults = zndskhc_get_options_default();
+			add_option( 'zndskhc_options', $options_defaults );
+		}
+		$zndskhc_options = get_option( 'zndskhc_options' );
+
+		/* Array merge incase this version has added new options */
+		if ( ! isset( $zndskhc_options['plugin_option_version'] ) || $zndskhc_options['plugin_option_version'] != $zndskhc_plugin_info["Version"] ) {
+			
+			$options_defaults = zndskhc_get_options_default();
+
+			if ( '0' != $zndskhc_options['time'] ) {
+				$time = time() + $zndskhc_options['time']*60*60;
+				wp_schedule_event( $time, 'schedules_hours', 'auto_synchronize_zendesk_hc' );
+			}
+
+			$zndskhc_options = array_merge( $options_defaults, $zndskhc_options );
+			$zndskhc_options['plugin_option_version'] = $zndskhc_plugin_info["Version"];
+			$update_option = true;
+		}
+
+		if ( ! isset( $zndskhc_options['plugin_db_version'] ) || $zndskhc_options['plugin_db_version'] != $plugin_db_version ) {
+			zndskhc_db_table();
+
+			$zndskhc_options['plugin_db_version'] = $plugin_db_version;
+			$update_option = true;
+		}
+
+		if ( isset( $update_option ) ) {
+			update_option( 'zndskhc_options', $zndskhc_options );
+		}
+	}
+}
+
+if ( ! function_exists( 'zndskhc_get_options_default' ) ) {
+	function zndskhc_get_options_default() {
+		global $zndskhc_plugin_info;
 
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
 		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
@@ -93,9 +153,12 @@ if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 		}
 		$email = 'wordpress@' . $sitename;
 
-		$zndskhc_options_default = array(
+		$options_defaults = array(
 			'plugin_option_version'		=> $zndskhc_plugin_info["Version"],
 			'plugin_db_version'			=> '',
+			'display_settings_notice'	=> 0,
+			'suggest_feature_banner'	=> 1,			
+
 			'subdomain'					=> '',
 			'user'						=> '',
 			'password'					=> '',
@@ -111,40 +174,10 @@ if ( ! function_exists( 'register_zndskhc_settings' ) ) {
 			),
 			'emailing_fail_backup'		=> '1',
 			'email'						=> $email,
-			'last_synch'				=> '',
-			'display_settings_notice'	=>	1,
-			'suggest_feature_banner'	=>	1,
-			'first_install'				=>	strtotime( "now" )
+			'last_synch'				=> ''
 		);
 
-		/* Install the option defaults */
-		if ( ! get_option( 'zndskhc_options' ) ) {
-			add_option( 'zndskhc_options', $zndskhc_options_default );
-		}
-
-		$zndskhc_options = get_option( 'zndskhc_options' );
-
-		/* Array merge incase this version has added new options */
-		if ( ! isset( $zndskhc_options['plugin_option_version'] ) || $zndskhc_options['plugin_option_version'] != $zndskhc_plugin_info["Version"] ) {
-			if ( '0' != $zndskhc_options['time'] ) {
-				$time = time() + $zndskhc_options['time']*60*60;
-				wp_schedule_event( $time, 'schedules_hours', 'auto_synchronize_zendesk_hc' );
-			}
-
-			$zndskhc_options = array_merge( $zndskhc_options_default, $zndskhc_options );
-			$zndskhc_options['plugin_option_version'] = $zndskhc_plugin_info["Version"];
-			$update_option = true;
-		}
-
-		if ( ! isset( $zndskhc_options['plugin_db_version'] ) || $zndskhc_options['plugin_db_version'] < $plugin_db_version ) {
-			zndskhc_db_table();
-
-			$zndskhc_options['plugin_db_version'] = $plugin_db_version;
-			$update_option = true;
-		}
-		if ( isset( $update_option ) ) {
-			update_option( 'zndskhc_options', $zndskhc_options );
-		}
+		return $options_defaults;
 	}
 }
 
@@ -243,8 +276,8 @@ if ( ! function_exists( 'zndskhc_activation_hook' ) ) {
 }
 
 /* Function is forming page of the settings of this plugin */
-if ( ! function_exists( 'zndskhc_settings_page' ) ) {
-	function  zndskhc_settings_page() {
+if ( ! function_exists( 'zndskhc_backup_page' ) ) {
+	function zndskhc_backup_page() {
 		global $wpdb, $wp_version, $zndskhc_options, $zndskhc_plugin_info, $zndskhc_options_default, $zndskhc_error, $zndskhc_zip_exist;
 		$message = $error = '';
 		$plugin_basename = plugin_basename( __FILE__ );
@@ -261,19 +294,12 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 		$file_check_name = dirname( __FILE__ )  . "/backup.log";
 		if ( ! file_exists( $file_check_name ) ) {
 			if ( $handle = @fopen( $file_check_name, "w+" ) ) {
-				$log_size = 0;
 				fclose( $handle );
 			} else {
 				$log_error = __( "Error creating log file" , 'zendesk-help-center' ) . ' ' . $file_check_name . '.';
 			}
 		}
-
-		if ( isset( $_GET['action'] ) && 'settings' == $_GET['action'] ) {
-			if ( file_exists( $file_check_name ) ) {
-				$log_size = round( filesize( dirname( __FILE__ )  . "/backup.log" ) / 1024, 2 );
-			}
-		}
-
+		
 		if ( ! empty( $zndskhc_error ) ) {
 			$error = $zndskhc_error;
 		}
@@ -283,258 +309,75 @@ if ( ! function_exists( 'zndskhc_settings_page' ) ) {
 			if ( true !== $result ) {
 				$error = $result;
 			} else {
-				$message = __( "Data is successfully updated" , 'zendesk-help-center' );
+				$message = __( "Data is successfully updated." , 'zendesk-help-center' );
 			}
-		}
-
-		if ( isset( $_REQUEST['zndskhc_submit_clear'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name_submit_clear' ) ) {
-			if ( $handle = fopen( $file_check_name, "w" ) ) {
-				fwrite( $handle, '' );
-				fclose( $handle );
-				@chmod( $file_check_name, 0755 );
-				$message = __( "The log file is cleared." , 'zendesk-help-center' );
-				$log_size = 0;
-			} else
-				$error = __( "Couldn't clear log file" , 'zendesk-help-center' );
-		}
-
-		if ( isset( $_REQUEST['zndskhc_submit'] ) && check_admin_referer( $plugin_basename, 'zndskhc_nonce_name_save_options' ) ) {
-			if ( isset( $_POST['bws_hide_premium_options'] ) ) {
-				$hide_result = bws_hide_premium_options( $zndskhc_options );
-				$zndskhc_options = $hide_result['options'];
-			}
-			$zndskhc_options['subdomain'] 	= stripslashes( esc_html( $_REQUEST['zndskhc_subdomain'] ) );
-			$zndskhc_options['user'] 		= stripslashes( esc_html( $_REQUEST['zndskhc_user'] ) );
-			$zndskhc_options['password'] 	= stripslashes( esc_html( $_REQUEST['zndskhc_password'] ) );
-			$zndskhc_options['token'] 		= stripslashes( esc_html( $_REQUEST['zndskhc_token'] ) );
-			if ( $zndskhc_options['time'] != intval( $_REQUEST['zndskhc_time'] ) ) {
-				$zndskhc_options['time'] = intval( $_REQUEST['zndskhc_time'] );
-				/* Add or delete hook of auto/handle mode */
-				if ( wp_next_scheduled( 'auto_synchronize_zendesk_hc' ) ) {
-					wp_clear_scheduled_hook( 'auto_synchronize_zendesk_hc' );
-				}
-
-				if ( '0' != $zndskhc_options['time'] ) {
-					$time = time() + $zndskhc_options['time']*60*60;
-					wp_schedule_event( $time, 'schedules_hours', 'auto_synchronize_zendesk_hc' );
-				}
-			}
-			$zndskhc_options['backup_elements']['categories'] = ( isset( $_REQUEST['zndskhc_categories_backup'] ) ) ? 1 : 0;
-			$zndskhc_options['backup_elements']['sections'] = ( isset( $_REQUEST['zndskhc_sections_backup'] ) ) ? 1 : 0;
-			$zndskhc_options['backup_elements']['articles'] = ( isset( $_REQUEST['zndskhc_articles_backup'] ) ) ? 1 : 0;
-			$zndskhc_options['backup_elements']['comments'] = ( isset( $_REQUEST['zndskhc_comments_backup'] ) && isset( $_REQUEST['zndskhc_articles_backup'] ) ) ? 1 : 0;
-			$zndskhc_options['backup_elements']['labels'] = ( isset( $_REQUEST['zndskhc_labels_backup'] ) ) ? 1 : 0;
-			$zndskhc_options['backup_elements']['attachments'] = ( isset( $_REQUEST['zndskhc_attachments_backup'] ) && isset( $_REQUEST['zndskhc_articles_backup'] ) ) ? 1 : 0;
-
-			$zndskhc_options['emailing_fail_backup'] = isset( $_REQUEST['zndskhc_emailing_fail_backup'] ) ? 1 : 0;
-			$zndskhc_options['email'] 	= stripslashes( esc_html( $_REQUEST['zndskhc_email'] ) );
-			if ( ! is_email( $zndskhc_options['email'] ) ) {
-				$zndskhc_options['email'] = $zndskhc_options_default['email'];
-			}
-
-			if ( empty( $error ) ) {
-				update_option( 'zndskhc_options', $zndskhc_options );
-				$message = __( "Settings saved" , 'zendesk-help-center' );
-			}
-		}
-
-		$bws_hide_premium_options_check = bws_hide_premium_options_check( $zndskhc_options );
-
-		/* GO PRO */
-		if ( isset( $_GET['action'] ) && 'go_pro' == $_GET['action'] ) {
-			$go_pro_result = bws_go_pro_tab_check( $plugin_basename, 'zndskhc_options' );
-			if ( ! empty( $go_pro_result['error'] ) ) {
-				$error = $go_pro_result['error'];
-			} elseif ( ! empty( $go_pro_result['message'] ) ) {
-				$message = $go_pro_result['message'];
-			}
-		}
-
-		/* Add restore function */
-		if ( isset( $_REQUEST['bws_restore_confirm'] ) && check_admin_referer( $plugin_basename, 'bws_settings_nonce_name' ) ) {
-			$zndskhc_options = $zndskhc_options_default;
-			update_option( 'zndskhc_options', $zndskhc_options );
-			$message = __( 'All plugin settings were restored.', 'zendesk-help-center' );
 		} ?>
 		<div class="wrap">
-			<h1><?php _e( 'Zendesk HC Settings', 'zendesk-help-center' ); ?></h1>
-            <noscript>
-                <div class="error below-h2">
-                    <p><strong>
-							<?php _e( 'Please, enable JavaScript in your browser.', 'zendesk-help-center' ); ?>
-                        </strong></p>
-                </div>
-            </noscript>
-			<h2 class="nav-tab-wrapper">
-				<a class="nav-tab <?php if ( ! isset( $_GET['action'] ) ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php"><?php _e( 'Backup', 'zendesk-help-center' ); ?></a>
-				<a class="nav-tab <?php if ( isset( $_GET['action'] ) && 'settings' == $_GET['action'] ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php&amp;action=settings"><?php _e( 'Settings', 'zendesk-help-center' ); ?></a>
-				<a class="nav-tab bws_go_pro_tab<?php if ( isset( $_GET['action'] ) && 'go_pro' == $_GET['action'] ) echo ' nav-tab-active'; ?>" href="admin.php?page=zendesk_hc.php&amp;action=go_pro"><?php _e( 'Go PRO', 'zendesk-help-center' ); ?></a>
-			</h2>
-			<?php bws_show_settings_notice();
-			if ( ! empty( $hide_result['message'] ) ) { ?>
-				<div class="updated fade below-h2"><p><strong><?php echo $hide_result['message']; ?></strong></p></div>
-			<?php } ?>
+			<h1><?php _e( 'Help Center Backup', 'zendesk-help-center' ); ?></h1>
 			<div class="updated fade below-h2" <?php if ( '' == $message || '' != $error ) echo "style=\"display:none\""; ?>><p><strong><?php echo $message; ?></strong></p></div>
 			<div class="error below-h2" <?php if ( '' == $error ) echo 'style="display:none"'; ?>><p><strong><?php echo $error; ?></strong></p></div>
-			<?php if ( isset( $_REQUEST['bws_restore_default'] ) && check_admin_referer( $plugin_basename, 'bws_settings_nonce_name' ) ) {
-				bws_form_restore_default_confirm( $plugin_basename );
-			} elseif ( ! isset( $_GET['action'] ) ) {
-				if ( ! empty( $zndskhc_options['last_synch'] ) ) { ?>
-					<p><?php _e( 'Last synchronization with Zendesk HC was on' , 'zendesk-help-center' ); echo ' ' . $zndskhc_options['last_synch']; ?></p>
-				<?php }
+			<?php if ( ! empty( $zndskhc_options['last_synch'] ) ) { ?>
+				<p><?php _e( 'Last synchronization with Zendesk Help Center was on' , 'zendesk-help-center' ); echo ' ' . $zndskhc_options['last_synch']; ?></p>
+			<?php }
 
-				$current_exist_backup = array();
+			$current_exist_backup = array();
 
-				foreach ( $elements as $key => $value ) {
-						$count = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "zndskhc_" . $key . "`" );
-						if ( ! empty( $count ) ) {
-							$current_exist_backup[ $key ] = $count;
-						}
+			foreach ( $elements as $key => $value ) {
+				$count = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "zndskhc_" . $key . "`" );
+				if ( ! empty( $count ) ) {
+					$current_exist_backup[ $key ] = $count;
 				}
-
-				if ( ! empty( $current_exist_backup ) ) { ?>
-					<h3><?php _e( 'Export backup', 'zendesk-help-center' ); ?>:</h3>
-						<form method="post" action="">
-						<div>
-						 	<?php foreach ( $elements as $key => $value ) {
-						 		if ( array_key_exists( $key, $current_exist_backup ) ) { ?>
-									<label><input type="<?php echo ( $zndskhc_zip_exist ) ? 'checkbox' : 'radio'; ?>" name="zndskhc_export_element[]" value="<?php echo $key; ?>" /> <?php echo $value . ' (' . $current_exist_backup[ $key ] . ')'; ?></label><br />
-								<?php }
-							}
-							if ( ! $zndskhc_zip_exist ) {
-								$upload_dir = wp_upload_dir();
-								echo '<span class="bws_info">' . __( 'There is no ZIP library on your server. You can download attachments manually from folder', 'zendesk-help-center' ) . ' ' . $upload_dir['basedir'] . '/zendesk_hc_attachments</span>';
-							} ?>
-						</div>
-						<p class="submit">
-							<input type="submit" class="button-primary zndskhc_submit_button zndskhc_export" value="<?php _e( 'Export', 'zendesk-help-center' ); ?>" />
-							<img class="zndskhc_loader" src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" />
-							<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name_export' ); ?>
-							<input type="hidden" name="zndskhc_export" value="submit" />
-						</p>
-					</form>
-				<?php }
-
-				if ( ! empty( $log_error ) ) { ?>
-					<div class="error below-h2"><p><?php echo $log_error; ?></p></div>
-				<?php } else
-					zndskhc_get_logs(); ?>
-				<form method="post" action="">
-					<p class="submit">
-						<input type="submit" class="button-primary zndskhc_submit_button" value="<?php _e( 'Synchronize now', 'zendesk-help-center' ); ?>" />
-						<img class="zndskhc_loader" src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" />
-						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name_synch' ); ?>
-						<input type="hidden" name="zndskhc_synch" value="submit" />
-					</p>
-				</form>
-			<?php } elseif ( isset( $_GET['action'] ) && 'settings' == $_GET['action'] ) {
-				if ( ! empty( $log_error ) ) { ?>
-					<div class="error below-h2"><p><?php echo $log_error; ?></p></div>
-				<?php } else { ?>
-					<form method="post" action="">
-						<table class="form-table">
-							<tr valign="top">
-								<th scope="row"><?php _e( 'Log file size', 'zendesk-help-center' ); ?></th>
-								<td>
-									<p>
-										&#126; <?php echo $log_size . ' ' . __( 'Kbyte', 'zendesk-help-center' ); ?>
-										<?php if ( 0 != $log_size ) { ?>
-											&#160;&#160;&#160;<input type="submit" class="button" value="<?php _e( 'Clear', 'zendesk-help-center' ); ?>" />
-										<?php } ?>
-									</p>
-								</td>
-							</tr>
-						</table>
-						<input type="hidden" name="zndskhc_submit_clear" value="submit" />
-						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name_submit_clear' ); ?>
-					</form>
-				<?php } ?>
-				<form method="post" action="" class="bws_form">
-					<table class="form-table">
-						<tr valign="top">
-							<th scope="row"><?php _e( 'Zendesk Information', 'zendesk-help-center' ); ?></th>
-							<td>
-								<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $zndskhc_options['subdomain']; ?>" />
-								<?php _e( 'subdomain', 'zendesk-help-center' ); ?>
-								<?php echo bws_add_help_box( sprintf(
-									__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
-									'<i>https://mysubdomain.zendesk.com</i>',
-									'<i>mysubdomain</i>'
-								) ); ?>
-								<br />
-								<input type="text" maxlength='250' name="zndskhc_user" value="<?php echo $zndskhc_options['user']; ?>" /> <?php _e( 'email', 'zendesk-help-center' ); ?><br />
-								<input type="password" maxlength='250' name="zndskhc_password" value="<?php echo $zndskhc_options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?><br />
-								<input type="text" maxlength='250' name="zndskhc_token" value="<?php echo $zndskhc_options['token']; ?>" /> <?php _e( 'token', 'zendesk-help-center-pro' );
-								echo bws_add_help_box( __( 'Don\'t know how to generate API token? ', 'bestwebsoft' ) . ' <a href="https://support.bestwebsoft.com/hc/en-us/articles/115005881386" target="_new" >' . __( "Read the instruction", 'bestwebsoft' ) . '</a>' );
-								?>
-							</td>
-						</tr>
-						<tr valign="top">
-							<th scope="row"><?php _e( 'Synchronize Zendesk HC every', 'zendesk-help-center' ); ?></th>
-							<td>
-								<input type="number" min="0" name="zndskhc_time" value="<?php echo $zndskhc_options['time']; ?>" /> (<?php _e( 'hours' , 'zendesk-help-center' ); ?>)
-								<br /><span class="bws_info"><?php _e( 'Set 0 to disable auto backup.', 'zendesk-help-center' ); ?></span>
-							</td>
-						</tr>
-						<tr valign="top">
-							<th scope="row"><?php _e( 'Backup', 'zendesk-help-center' ); ?></th>
-							<td><fieldset>
-								<?php foreach ( $elements as $key => $value ) { ?>
-									<label><input type="checkbox" name="zndskhc_<?php echo $key; ?>_backup" value="1" <?php if ( $zndskhc_options['backup_elements'][ $key ] ) echo 'checked'; ?> /> <?php echo $value; ?></label><br />
-								<?php } ?>
-							</fieldset></td>
-						</tr>
-						<tr valign="top">
-							<th scope="row"><?php _e( 'Send email in case of backup failure', 'zendesk-help-center' ); ?></th>
-							<td>
-								<input type="checkbox" name="zndskhc_emailing_fail_backup" value="1" <?php if ( $zndskhc_options['emailing_fail_backup'] ) echo 'checked'; ?> /><br />
-								<input type="email" maxlength='250' name="zndskhc_email" value="<?php echo $zndskhc_options['email']; ?>" />
-							</td>
-						</tr>
-					</table>
-					<?php if ( ! $bws_hide_premium_options_check ) { ?>
-						<div class="bws_pro_version_bloc">
-							<div class="bws_pro_version_table_bloc">
-								<button type="submit" name="bws_hide_premium_options" class="notice-dismiss bws_hide_premium_options" title="<?php _e( 'Close', 'zendesk-help-center' ); ?>"></button>
-								<div class="bws_table_bg"></div>
-								<table class="form-table bws_pro_version">
-									<tr valign="top">
-										<th scope="row"><?php _e( 'Display help widget on the site', 'zendesk-help-center' ); ?></th>
-										<td>
-											<input disabled="disabled" type="checkbox" name="zndskhc_display_help_widget" value="1" />
-										</td>
-									</tr>
-									<tr valign="top">
-										<th scope="row"><?php _e( 'Contact link in help widget', 'zendesk-help-center' ); ?></th>
-										<td>
-											<input disabled="disabled" type="url" name="zndskhc_contact_link" value="" />
-										</td>
-									</tr>
-									<tr valign="top">
-										<th scope="row"><?php _e( 'Button title in help widget', 'zendesk-help-center' ); ?></th>
-										<td>
-											<input disabled="disabled" type="text" name="zndskhc_help_button_title" value="" />
-										</td>
-									</tr>
-								</table>
-							</div>
-							<div class="bws_pro_version_tooltip">
-								<a class="bws_button" href="https://bestwebsoft.com/products/wordpress/plugins/zendesk-help-center/?k=036b375477a35a960f966d052591e9ed&pn=208&v=<?php echo $zndskhc_plugin_info["Version"]; ?>&wp_v=<?php echo $wp_version; ?>" target="_blank" title="Zendesk Help Center Pro"><?php _e( 'Learn More', 'zendesk-help-center' ); ?></a>
-								<div class="clear"></div>
-							</div>
-						</div>
-					<?php } ?>
-					<p class="submit">
-						<input type="hidden" name="zndskhc_submit" value="submit" />
-						<input id="bws-submit-button" type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'zendesk-help-center' ); ?>" />
-						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name_save_options' ); ?>
-					</p>
-				</form>
-				<?php bws_form_restore_default_settings( $plugin_basename );
-			} elseif ( 'go_pro' == $_GET['action'] ) {
-				bws_go_pro_tab_show( $bws_hide_premium_options_check, $zndskhc_plugin_info, $plugin_basename, 'zendesk_hc.php', 'zendesk_hc_pro.php', 'zendesk-help-center-pro/zendesk-help-center-pro.php', 'zendesk-help-center', 'f047e20c92c972c398187a4f70240285', '208', isset( $go_pro_result['pro_plugin_is_activated'] ) );
 			}
-			bws_plugin_reviews_block( $zndskhc_plugin_info['Name'], 'zendesk-help-center' ) ?>
+
+			if ( ! empty( $current_exist_backup ) ) { ?>
+				<h3><?php _e( 'Export backup', 'zendesk-help-center' ); ?>:</h3>
+				<form method="post" action="">
+					<div>
+					 	<?php foreach ( $elements as $key => $value ) {
+					 		if ( array_key_exists( $key, $current_exist_backup ) ) { ?>
+								<label><input type="<?php echo ( $zndskhc_zip_exist ) ? 'checkbox' : 'radio'; ?>" name="zndskhc_export_element[]" value="<?php echo $key; ?>" /> <?php echo $value . ' (' . $current_exist_backup[ $key ] . ')'; ?></label><br />
+							<?php }
+						}
+						if ( ! $zndskhc_zip_exist ) {
+							$upload_dir = wp_upload_dir();
+							echo '<span class="bws_info">' . __( 'There is no ZIP library on your server. You can download attachments manually from folder', 'zendesk-help-center' ) . ' ' . $upload_dir['basedir'] . '/zendesk_hc_attachments</span>';
+						} ?>
+					</div>
+					<p class="submit">
+						<input type="submit" class="button-primary zndskhc_submit_button zndskhc_export" value="<?php _e( 'Export', 'zendesk-help-center' ); ?>" />
+						<img class="zndskhc_loader" src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" />
+						<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name_export' ); ?>
+						<input type="hidden" name="zndskhc_export" value="submit" />
+					</p>
+				</form>
+			<?php }
+
+			if ( ! empty( $log_error ) ) { ?>
+				<div class="error below-h2"><p><?php echo $log_error; ?></p></div>
+			<?php } else {
+				zndskhc_get_logs();
+			} ?>
+			<form method="post" action="">
+				<p class="submit">
+					<input type="submit" class="button-primary zndskhc_submit_button" value="<?php _e( 'Synchronize now', 'zendesk-help-center' ); ?>" />
+					<img class="zndskhc_loader" src="<?php echo plugins_url( 'images/ajax-loader.gif', __FILE__ ); ?>" />
+					<?php wp_nonce_field( $plugin_basename, 'zndskhc_nonce_name_synch' ); ?>
+					<input type="hidden" name="zndskhc_synch" value="submit" />
+				</p>
+			</form>			
+		</div>
+	<?php }
+}
+
+if ( ! function_exists( 'zndskhc_settings_page' ) ) {
+	function zndskhc_settings_page() {		
+		if ( ! class_exists( 'Bws_Settings_Tabs' ) )
+			require_once( dirname( __FILE__ ) . '/bws_menu/class-bws-settings.php' );
+		require_once( dirname( __FILE__ ) . '/includes/class-zndskhc-settings.php' );
+		$page = new Zndskhc_Settings_Tabs( plugin_basename( __FILE__ ) ); ?>
+		<div class="wrap">
+			<h1><?php _e( 'Help Center Settings', 'zendesk-help-center' ); ?></h1>
+			<?php $page->display_content(); ?>
 		</div>
 	<?php }
 }
@@ -554,6 +397,8 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 				$elements = $_POST["zndskhc_export_element"];
 
 				foreach ( $elements as $element ) {
+					$element = sanitize_text_field( $element );
+					
 					$results[ $element ] = $wpdb->get_results( "SELECT * FROM `" . $wpdb->prefix . 'zndskhc_' . $element . "`", ARRAY_A );
 
 					if ( ! empty( $results[ $element ] ) ) {
@@ -618,28 +463,43 @@ if ( ! function_exists( 'zndskhc_export' ) ) {
 	}
 }
 
-if ( ! function_exists( 'zndskhc_curl' ) ) {
-	function zndskhc_curl( $url, $attempt = 1 ) {
+if ( ! function_exists( 'zndskhc_remote_get' ) ) {
+	function zndskhc_remote_get( $url, $attempt = 1 ) {
 		global $zndskhc_options;
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "Accept: application/json" ) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+
 		if ( ! empty( $zndskhc_options['token'] ) ) {
-			curl_setopt( $ch, CURLOPT_USERPWD, $zndskhc_options['user'] . '/token:' . $zndskhc_options['token'] );
+			$userpwd = $zndskhc_options['user'] . '/token:' . $zndskhc_options['token'];
 		} else {
-			curl_setopt( $ch, CURLOPT_USERPWD, $zndskhc_options['user'] . ':' . $zndskhc_options['password'] );
+			$userpwd = $zndskhc_options['user'] . ':' . $zndskhc_options['password'];
 		}
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		$json_resp = curl_exec( $ch );
-		$array_resp = json_decode( $json_resp, true );
-		curl_close( $ch );
-		if ( !is_array( $array_resp ) && empty( $array_resp ) && ! empty( $attempt ) ) {
-			/* too many curl/ try again later */
-			sleep(5);
-			$array_resp = zndskhc_curl( $url, 2 );
-		}
-		return $array_resp;
+
+		$args = array(
+		    'headers' => array(
+		        'Authorization' => 'Basic ' . base64_encode( $userpwd )
+		    )
+		);
+		$raw_response = wp_remote_get( $url, $args );
+
+		if ( is_wp_error( $raw_response ) ) {
+			return array( 'error' => $raw_response->get_error_code(), 'description' => $raw_response->get_error_message() );		
+		} else {
+			$response = maybe_unserialize( wp_remote_retrieve_body( $raw_response ) );
+			$response_code = wp_remote_retrieve_response_code( $raw_response );
+			
+			if ( 200 != $response_code ) {
+				return array( 'error' => $response_code, 'description' => $response );	
+			} else {
+
+				$array_resp = json_decode( $response, true );				
+
+				if ( !is_array( $array_resp ) && empty( $array_resp ) && ! empty( $attempt ) ) {
+					/* too many remote get/ try again later */
+					sleep(5);
+					$array_resp = zndskhc_remote_get( $url, 2 );
+				}
+				return $array_resp;
+			}
+		}		
 	}
 }
 
@@ -652,19 +512,10 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 		}
 
 		if ( empty( $zndskhc_options['subdomain'] ) || empty( $zndskhc_options['user'] ) || empty( $zndskhc_options['password'] ) ) {
-			$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as some plugin settings are empty. To fix it go to', 'zendesk-help-center' ) . ' ' . __( 'settings page', 'zendesk-help-center' );
+			$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as some plugin settings are empty. To fix it go to', 'zendesk-help-center' ) . ' <a href="' . get_admin_url( null, 'admin.php?page=zendesk_hc.php' ) . '">' . __( 'the settings page', 'zendesk-help-center' ) . '</a>.';
 			zndskhc_log( $log );
 			if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
-				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as some plugin settings are empty. To fix it go to', 'zendesk-help-center' ) . ' <a href="' . get_admin_url( null, 'admin.php?page=zendesk_hc.php&action=settings' ) . '">' . __( 'settings page', 'zendesk-help-center' ) . '</a>.';
-				zndskhc_send_mail( $log );
-			}
-			return $log;
-		}
-
-		if ( ! function_exists( 'curl_init' ) ) {
-			$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as this hosting does not support СURL.', 'zendesk-help-center' );
-			zndskhc_log( $log );
-			if ( $auto_mode && ! empty( $zndskhc_options['emailing_fail_backup'] ) ) {
+				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Backup failed as some plugin settings are empty. To fix it go to', 'zendesk-help-center' ) . ' <a href="' . get_admin_url( null, 'admin.php?page=zendesk_hc.php' ) . '">' . __( 'the settings page', 'zendesk-help-center' ) . '</a>.';
 				zndskhc_send_mail( $log );
 			}
 			return $log;
@@ -678,7 +529,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 			while ( $i != false ) {
 
 				$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/categories.json?page=' . $i . '&per_page=30';
-				$array_resp = zndskhc_curl( $url );
+				$array_resp = zndskhc_remote_get( $url );
 
 				if ( !is_array( $array_resp ) && empty( $array_resp ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Categories backup', 'zendesk-help-center' ) . ' - ' . __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
@@ -775,7 +626,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 			$i = 1;
 			while ( $i != false ) {
 				$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/sections.json?page=' . $i . '&per_page=30';
-				$array_resp = zndskhc_curl( $url );
+				$array_resp = zndskhc_remote_get( $url );
 
 				if ( !is_array( $array_resp ) && empty( $array_resp ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Sections backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
@@ -878,7 +729,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 			$i = 1;
 			while ( $i != false ) {
 				$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/articles.json?page=' . $i . '&per_page=30';
-				$array_resp = zndskhc_curl( $url );
+				$array_resp = zndskhc_remote_get( $url );
 
 				if ( ! is_array( $array_resp ) && empty( $array_resp ) ) {
 					$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Articles backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
@@ -959,7 +810,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 							if ( $new_or_updated && ! empty( $zndskhc_options['backup_elements']['comments'] ) ) {
 								$all_article_comments = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_comments` WHERE `source_id` = '" . $value['id'] . "' AND `source_type` = 'Article'", ARRAY_A );
 								$product_url_stat = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/articles/' . $value['id'] . '/comments.json';
-								$array_resp_comments = zndskhc_curl( $product_url_stat );
+								$array_resp_comments = zndskhc_remote_get( $product_url_stat );
 
 								if ( !is_array( $array_resp_comments ) && empty( $array_resp_comments ) ) {
 									$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Comments backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
@@ -1028,7 +879,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 								$k = 1;
 								while ( $k != false ) {
 									$product_url_stat = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/articles/' . $value['id'] . '/attachments.json?page=' . $k . '&per_page=30';
-									$array_resp_attach = zndskhc_curl( $product_url_stat );
+									$array_resp_attach = zndskhc_remote_get( $product_url_stat );
 
 									if ( !is_array( $array_resp_attach ) && empty( $array_resp_attach ) ) {
 										$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Attachments backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
@@ -1198,7 +1049,7 @@ if ( ! function_exists( 'zndskhc_synchronize' ) ) {
 		if ( ! empty( $zndskhc_options['backup_elements']['labels'] ) ) {
 			$all_labels = $wpdb->get_results( "SELECT `id`, `updated_at` FROM `" . $wpdb->prefix . "zndskhc_labels`", ARRAY_A );
 			$url = 'https://' . $zndskhc_options['subdomain'] . '.zendesk.com/api/v2/help_center/articles/labels.json';
-			$array_resp = zndskhc_curl( $url );
+			$array_resp = zndskhc_remote_get( $url );
 			if ( !is_array( $array_resp ) && empty( $array_resp ) ) {
 				$log = __( 'ERROR', 'zendesk-help-center' ) . ': ' . __( 'Labels backup', 'zendesk-help-center' ) . ' - ' .  __( 'Undefined error has occurred while getting data from Zendesk API.', 'zendesk-help-center' );
 				zndskhc_log( $log );
@@ -1364,7 +1215,7 @@ if ( ! function_exists( 'zndskhc_send_mail' ) ) {
 
 		/* send message to user */
 		$headers = 'From: ' . get_bloginfo( 'name' ) . ' <' . $from_email . '>';
-		$subject = __( "Zendesk HC backup error on", 'zendesk-help-center' ) . ' ' . esc_attr( get_bloginfo( 'name', 'display' ) );;
+		$subject = __( "Help Center backup error on", 'zendesk-help-center' ) . ' ' . esc_attr( get_bloginfo( 'name', 'display' ) );;
 		wp_mail( $zndskhc_options['email'], $subject, $message, $headers );
 	}
 }
@@ -1392,7 +1243,7 @@ if ( !function_exists( 'zndskhc_action_links' ) ) {
 			if ( ! $this_plugin ) $this_plugin = plugin_basename( __FILE__ );
 
 			if ( $file == $this_plugin ) {
-				$settings_link = '<a href="admin.php?page=zendesk_hc.php&action=settings">' . __( 'Settings', 'zendesk-help-center' ) . '</a>';
+				$settings_link = '<a href="admin.php?page=zendesk_hc.php">' . __( 'Settings', 'zendesk-help-center' ) . '</a>';
 				array_unshift( $links, $settings_link );
 			}
 		}
@@ -1406,7 +1257,7 @@ if ( !function_exists( 'zndskhc_links' ) ) {
 		$base = plugin_basename( __FILE__ );
 		if ( $file == $base ) {
 			if ( ! is_network_admin() ) {
-				$links[]	=	'<a href="admin.php?page=zendesk_hc.php&action=settings">' . __( 'Settings', 'zendesk-help-center' ) . '</a>';
+				$links[]	=	'<a href="admin.php?page=zendesk_hc.php">' . __( 'Settings', 'zendesk-help-center' ) . '</a>';
 			}
 			$links[]	=	'<a href="https://support.bestwebsoft.com/hc/en-us/sections/200956739" target="_blank">' . __( 'FAQ', 'zendesk-help-center' ) . '</a>';
 			$links[]	=	'<a href="https://support.bestwebsoft.com">' . __( 'Support', 'zendesk-help-center' ) . '</a>';
@@ -1417,10 +1268,13 @@ if ( !function_exists( 'zndskhc_links' ) ) {
 
 if ( ! function_exists( 'zndskhc_admin_js' ) ) {
 	function zndskhc_admin_js() {
-		if ( isset( $_REQUEST['page'] ) && 'zendesk_hc.php' == $_REQUEST['page'] ) {
+		wp_enqueue_style( 'zndskhc_icon', plugins_url( 'css/icon.css', __FILE__ ) );
+
+		if ( isset( $_REQUEST['page'] ) && ( 'zendesk_hc.php' == $_REQUEST['page'] || 'zendesk_hc_backup.php' == $_REQUEST['page'] ) ) {
 			wp_enqueue_style( 'zndskhc_stylesheet', plugins_url( 'css/style.css', __FILE__ ) );
 			wp_enqueue_script( 'zndskhc_script', plugins_url( 'js/script.js', __FILE__ ) );
 
+			bws_plugins_include_codemirror();
 			bws_enqueue_settings_scripts();
 		}
 	}
@@ -1429,17 +1283,10 @@ if ( ! function_exists( 'zndskhc_admin_js' ) ) {
 /* add admin notices */
 if ( ! function_exists ( 'zndskhc_admin_notices' ) ) {
 	function zndskhc_admin_notices() {
-		global $hook_suffix, $zndskhc_plugin_info, $zndskhc_options;
+		global $hook_suffix, $zndskhc_plugin_info;
+
 		if ( 'plugins.php' == $hook_suffix && ! is_network_admin() ) {
-			if ( empty( $zndskhc_options ) ) {
-				register_zndskhc_settings();
-			}
-
-			bws_plugin_banner_to_settings( $zndskhc_plugin_info, 'zndskhc_options', 'zendesk-help-center', 'admin.php?page=zendesk_hc.php&action=settings' );
-
-			if ( isset( $zndskhc_options['first_install'] ) && strtotime( '-1 week' ) > $zndskhc_options['first_install'] ) {
-				bws_plugin_banner( $zndskhc_plugin_info, 'zndskhc', 'zendesk-help-center', '617141936fb69ce9c91a2160da415f24', '208', '//ps.w.org/zendesk-help-center/assets/icon-128x128.png' );
-			}
+			bws_plugin_banner_to_settings( $zndskhc_plugin_info, 'zndskhc_options', 'zendesk-help-center', 'admin.php?page=zendesk_hc.php&action=settings' );			
 		}
 
 		if ( isset( $_REQUEST['page'] ) && 'zendesk_hc.php' == $_REQUEST['page'] ) {
