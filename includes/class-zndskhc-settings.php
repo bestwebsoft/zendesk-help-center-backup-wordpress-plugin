@@ -33,10 +33,9 @@ if ( ! class_exists( 'Zndskhc_Settings_Tabs' ) ) {
 				'is_network_options' => is_network_admin(),
 				'tabs' 				 => $tabs,
 				'wp_slug'			 => 'zendesk-help-center',
-				'pro_page' 			 => 'admin.php?page=zendesk_hc_pro.php',
-				'bws_license_plugin' => 'zendesk-help-center-pro/zendesk-help-center-pro.php',
 				'link_key' 			 => '036b375477a35a960f966d052591e9ed',
-				'link_pn' 			 => '208'
+				'link_pn' 			 => '208',
+				'doc_link'          => 'https://bestwebsoft.com/documentation/help-center/help-center-user-guide/'
 			) );
 
 			$this->file_log = dirname( dirname( __FILE__ ) )  . "/backup.log";
@@ -128,6 +127,29 @@ if ( ! class_exists( 'Zndskhc_Settings_Tabs' ) ) {
 			<h3 class="bws_tab_label"><?php _e( 'Help Center Settings', 'zendesk-help-center' ); ?></h3>
 			<?php $this->help_phrase(); ?>
 			<hr />
+			<div class="bws_tab_sub_label"><?php _e( 'Zendesk Authorization', 'zendesk-help-center' ); ?>
+			</div>
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row"><?php _e( 'Zendesk Information', 'zendesk-help-center' ); ?></th>
+					<td>
+						<input type="text" maxlength='250' class="zndskhc_input_field" name="zndskhc_subdomain" value="<?php echo $this->options['subdomain']; ?>" />
+						<?php _e( 'subdomain', 'zendesk-help-center' ); ?>
+						<?php echo bws_add_help_box( sprintf(
+							__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
+							'<i>https://mysubdomain.zendesk.com</i>',
+							'<i>mysubdomain</i>'
+						) ); ?>
+						<br />
+						<input type="text" maxlength='250' class="zndskhc_input_field" name="zndskhc_user" value="<?php echo $this->options['user']; ?>" /> <?php _e( 'email', 'zendesk-help-center' ); ?><br />
+						<input type="password" maxlength='250' class="zndskhc_input_field" name="zndskhc_password" value="<?php echo $this->options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?><br />
+						<input type="text" maxlength='250' class="zndskhc_input_field" name="zndskhc_token" value="<?php echo $this->options['token']; ?>" /> <?php _e( 'token', 'zendesk-help-center' ); ?>
+						<p class="bws_info"><?php _e( 'Don\'t know how to generate API token? ', 'zendesk-help-center' );?> <a href="https://support.bestwebsoft.com/hc/en-us/articles/115005881386" target="_new" ><?php _e( "Read the instruction", 'bestwebsoft' ); ?></a></p>
+					</td>
+				</tr>
+			</table>
+			<div class="bws_tab_sub_label"><?php _e( 'General', 'zendesk-help-center' ); ?>
+			</div>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row"><?php _e( 'Log File Size', 'zendesk-help-center' ); ?></th>
@@ -143,26 +165,9 @@ if ( ! class_exists( 'Zndskhc_Settings_Tabs' ) ) {
 					</td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e( 'Zendesk Information', 'zendesk-help-center' ); ?></th>
-					<td>
-						<input type="text" maxlength='250' name="zndskhc_subdomain" value="<?php echo $this->options['subdomain']; ?>" />
-						<?php _e( 'subdomain', 'zendesk-help-center' ); ?>
-						<?php echo bws_add_help_box( sprintf(
-							__( "Example: your URL is %s, and it is necessary to enter %s part only.", 'zendesk-help-center' ),
-							'<i>https://mysubdomain.zendesk.com</i>',
-							'<i>mysubdomain</i>'
-						) ); ?>
-						<br />
-						<input type="text" maxlength='250' name="zndskhc_user" value="<?php echo $this->options['user']; ?>" /> <?php _e( 'email', 'zendesk-help-center' ); ?><br />
-						<input type="password" maxlength='250' name="zndskhc_password" value="<?php echo $this->options['password']; ?>" /> <?php _e( 'password', 'zendesk-help-center' ); ?><br />
-						<input type="text" maxlength='250' name="zndskhc_token" value="<?php echo $this->options['token']; ?>" /> <?php _e( 'token', 'zendesk-help-center-pro' ); ?>
-						<p class="bws_info"><?php _e( 'Don\'t know how to generate API token? ', 'bestwebsoft' );?> <a href="https://support.bestwebsoft.com/hc/en-us/articles/115005881386" target="_new" ><?php _e( "Read the instruction", 'bestwebsoft' ); ?></a></p>
-					</td>
-				</tr>
-				<tr valign="top">
 					<th scope="row"><?php _e( 'Synchronize Every', 'zendesk-help-center' ); ?></th>
 					<td>
-						<input type="number" min="0" name="zndskhc_time" value="<?php echo $this->options['time']; ?>" /> <?php _e( 'hours' , 'zendesk-help-center' ); ?>
+						<input type="number" min="0" name="zndskhc_time" style="width: 100px;" value="<?php echo $this->options['time']; ?>" /> <?php _e( 'hours' , 'zendesk-help-center' ); ?>
 						<p class="bws_info"><?php _e( 'Set 0 to disable auto backup.', 'zendesk-help-center' ); ?></p>
 					</td>
 				</tr>
@@ -175,15 +180,18 @@ if ( ! class_exists( 'Zndskhc_Settings_Tabs' ) ) {
 					</fieldset></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e( 'Send Email on Backup Failure', 'zendesk-help-center' ); ?></th>
+					<th scope="row"><?php _e( 'Backup Failure Notification', 'zendesk-help-center' ); ?></th>
 					<td>
 						<input type="checkbox" name="zndskhc_emailing_fail_backup" value="1" <?php if ( $this->options['emailing_fail_backup'] ) echo 'checked'; ?> class="bws_option_affect" data-affect-show=".zndskhc_email_fail_backup" />
+						<span class="bws_info"><?php _e( 'Enable to receive notification on backup failure.', 'zendesk-help-center' ); ?></span>
 						<p class="zndskhc_email_fail_backup">
-							<input type="email" maxlength='250' name="zndskhc_email" value="<?php echo $this->options['email']; ?>" />
+							<input type="email" maxlength='250' class="zndskhc_input_field" name="zndskhc_email" value="<?php echo $this->options['email']; ?>" />
 						</p>
 					</td>
 				</tr>
 			</table>
+			<div class="bws_tab_sub_label"><?php _e( 'Help Widget', 'zendesk-help-center' ); ?>
+			</div><br/>		
 			<?php if ( ! $this->hide_pro_tabs ) { ?>
 				<div class="bws_pro_version_bloc">
 					<div class="bws_pro_version_table_bloc">
@@ -198,15 +206,15 @@ if ( ! class_exists( 'Zndskhc_Settings_Tabs' ) ) {
 								</td>
 							</tr>
 							<tr valign="top">
-								<th scope="row"><?php _e( 'Contact Link', 'zendesk-help-center' ); ?></th>
+								<th scope="row"><?php _e( 'Button Link', 'zendesk-help-center' ); ?></th>
 								<td>
-									<input disabled="disabled" type="url" name="zndskhc_contact_link" value="" />
+									<input disabled="disabled" type="url" class="zndskhc_input_field" name="zndskhc_contact_link" value="" />
 								</td>
 							</tr>
 							<tr valign="top">
 								<th scope="row"><?php _e( 'Button Title', 'zendesk-help-center' ); ?></th>
 								<td>
-									<input disabled="disabled" type="text" name="zndskhc_help_button_title" value="" />
+									<input disabled="disabled" type="text" class="zndskhc_input_field" name="zndskhc_help_button_title" value="" />
 								</td>
 							</tr>
 						</table>

@@ -3,20 +3,22 @@ Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: backup, backup data, database, zendesk, zendesk plugin, zendesk help center, zendesk help center backup, zendesk backup log, zendesk data to database, backup time, help center, save zendesk center data
 Requires at least: 4.5
-Tested up to: 5.3.2
-Stable tag: 1.1.0
+Tested up to: 5.9
+Stable tag: 1.1.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Backup and export Zendesk Help Center content automatically to your WordPress website database.
+Backup and export Help Center content automatically to your WordPress website database.
 
 == Description ==
 
-This plugin is a simple solution to backup and export your Zendesk Help Center data on WordPress website. Configure it, display enhanced Help Center widget, synchronize and make export of the current data.
+This plugin is a simple solution to backup and export your Help Center data on WordPress website. Configure it, display enhanced Help Center widget, synchronize and make export of the current data.
 
-Install now and never lose your Zendesk Help Center articles!
+Install now and never lose your Help Center articles!
 
 > **NOTE:** Help Center plugin requires Help Center system to be activated in your Zendesk account and doesn’t work with an old system.
+
+[View Demo](https://bestwebsoft.com/demo-help-center/?ref=readme)
 
 http://www.youtube.com/watch?v=7YT3dlsx0iQ
 
@@ -31,7 +33,7 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 	* Article attachments
 * Log backups
 * Email notifications in case of backup failure
-* Set the time period for Zendesk Help Center synchronization
+* Set the time period for Help Center synchronization
 * Compatible with latest WordPress version
 * Incredibly simple settings for fast setup without modifying code
 * Detailed step-by-step documentation and videos
@@ -40,7 +42,7 @@ http://www.youtube.com/watch?v=7YT3dlsx0iQ
 >
 > All features from Free version included plus:
 >
-> * Add and configure enhanced Zendesk Help Center widget
+> * Add and configure enhanced Help Center widget
 > * Track widget activity stats
 > * View articles data via admin dashboard
 > * Get answer to your support question within one business day ([Support Policy](https://bestwebsoft.com/support-policy/))
@@ -51,13 +53,18 @@ If you have a feature suggestion or idea you'd like to see in the plugin, we'd l
 
 = Documentation & Videos =
 
-* [[Doc] Installation](https://docs.google.com/document/d/1-hvn6WRvWnOqj5v5pLUk7Awyu87lq5B_dO-Tv-MC9JQ/)
-* [[Doc] Purchase](https://docs.google.com/document/d/1EUdBVvnm7IHZ6y0DNyldZypUQKpB8UVPToSc_LdOYQI/)
+* [[Doc] User Guide](https://bestwebsoft.com/documentation/help-center/help-center-user-guide/)
+* [[Doc] Installation](https://bestwebsoft.com/documentation/how-to-install-a-wordpress-product/how-to-install-a-wordpress-plugin/)
+* [[Doc] Purchase](https://bestwebsoft.com/documentation/how-to-purchase-a-wordpress-plugin/how-to-purchase-wordpress-plugin-from-bestwebsoft/)
 * [[Video] Installation Instruction](http://www.youtube.com/watch?v=0QatAvYLxMM)
 
 = Help & Support =
 
 Visit our Help Center if you have any questions, our friendly Support Team is happy to help - <https://support.bestwebsoft.com/>
+
+= Affiliate Program =
+
+Earn 20% commission by selling the premium WordPress plugins and themes by BestWebSoft — https://bestwebsoft.com/affiliate/
 
 = Translation =
 
@@ -76,7 +83,7 @@ Some of these translations are not complete. We are constantly adding new featur
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Plugin settings are located in 'Help Center'.
 
-[View a Step-by-step Instruction on Help Center Installation](https://docs.google.com/document/d/1-hvn6WRvWnOqj5v5pLUk7Awyu87lq5B_dO-Tv-MC9JQ/)
+[View a Step-by-step Instruction on Help Center Installation](https://bestwebsoft.com/documentation/how-to-install-a-wordpress-product/how-to-install-a-wordpress-plugin/)
 
 https://www.youtube.com/watch?v=0QatAvYLxMM
 
@@ -112,7 +119,7 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 1. the link to the page where the problem occurs
 2. the name of the plugin and its version. If you are using a pro version - your order number.
 3. the version of your WordPress installation
-4. copy and paste into the message your system status report. Please read more here: [Instruction on System Status](https://docs.google.com/document/d/1Wi2X8RdRGXk9kMszQy1xItJrpN0ncXgioH935MaBKtc/)
+4. copy and paste into the message your system status report. Please read more here: [Instruction on System Status](https://bestwebsoft.com/documentation/how-to-install-a-wordpress-product/how-to-install-a-wordpress-plugin/)
 
 == Screenshots ==
 
@@ -120,6 +127,12 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 2. Plugin settings page.
 
 == Changelog ==
+
+= V1.1.1 - 20.03.2022 =
+* Update : All functionality was updated for WordPress 5.9
+* Update : BWS plugins section was updated.
+* Update : User Guide has been added.
+* Update : Usability improved.
 
 = V1.1.0 - 13.01.2020 =
 * Update : Plugin was renamed.
@@ -180,6 +193,11 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.1.1 =
+* Usability improved.
+* The compatibility with new WordPress version updated.
+* Plugin optimization completed.
 
 = V1.1.0 =
 * Bugs fixed.
