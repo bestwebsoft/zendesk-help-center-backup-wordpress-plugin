@@ -7,7 +7,7 @@
 <p><strong>NOTE:</strong> Help Center plugin requires Help Center system to be activated in your Zendesk account and doesn’t work with an old system.</p>
 </blockquote>
 <p><a href="https://bestwebsoft.com/demo-help-center/?ref=readme" rel="nofollow ugc">View Demo</a></p>
-<p><span class="embed-youtube" style="text-align:center; display: block;"></span></p>
+<p></p>
 <h4>Free Features</h4>
 <ul>
 <li>Backup and export:

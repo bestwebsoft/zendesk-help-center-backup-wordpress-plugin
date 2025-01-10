@@ -2,9 +2,9 @@
 Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: backup, backup data, database, zendesk, zendesk plugin, zendesk help center, zendesk help center backup, zendesk backup log, zendesk data to database, backup time, help center, save zendesk center data
-Requires at least: 4.5
-Tested up to: 5.9
-Stable tag: 1.1.1
+Requires at least: 5.6
+Tested up to: 6.7
+Stable tag: 1.1.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -128,6 +128,15 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 
 == Changelog ==
 
+= V1.1.3 - 10.01.2025 =
+* Update : BWS Panel section update.
+* Update : All functionality was updated for WordPress 6.7.
+* Update : Usability improved.
+* Bugfix : Vulnerabilities and security issues were fixed.
+
+= V1.1.2 - 26.04.2022 =
+* Bugfix : Deactivation Feedback fix.
+
 = V1.1.1 - 20.03.2022 =
 * Update : All functionality was updated for WordPress 5.9
 * Update : BWS plugins section was updated.
@@ -193,6 +202,14 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * Bugfix : The code refactoring was performed.
 
 == Upgrade Notice ==
+
+= V1.1.3 =
+* Usability improved.
+* The compatibility with new WordPress version updated.
+* Plugin optimization completed.
+
+= V1.1.2 =
+* Bugs fixed.
 
 = V1.1.1 =
 * Usability improved.
